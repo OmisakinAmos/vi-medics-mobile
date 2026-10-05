@@ -1,0 +1,20 @@
+/* Phone / Android app refinements. Desktop layout is untouched. */
+.bottom-nav{display:none}
+
+@media(max-width:720px){
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgba(16,42,67,.06)}
+  .bottom-nav button{background:transparent;color:var(--muted);display:grid;justify-items:center;gap:2px;font-size:10px;font-weight:600;padding:6px 0;min-height:48px}
+  .bottom-nav-icon{position:relative;font-size:19px;line-height:1.1}
+  .bottom-nav-icon b{position:absolute;top:-5px;right:-12px;background:var(--teal);color:#fff;border-radius:99px;min-width:16px;height:16px;font-size:9px;display:grid;place-items:center;padding:0 3px}
+  .bottom-nav button.bottom-nav-active{color:var(--blue);font-weight:800}
+  /* the tab bar replaces the header cart/account/menu shortcuts */
+  .site-header .header-actions,.site-header .mobile-menu{display:none}
+  .site-header{padding-top:env(safe-area-inset-top)}
+  input,select{font-size:16px} /* prevents zoom-on-focus */
+  .primary-button,.add-button,.outline-button{min-height:44px}
+  .footer{padding-bottom:30px}
+}
+html.is-native{-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+html.is-native body{-webkit-user-select:none;user-select:none}
+html.is-native input,html.is-native textarea{-webkit-user-select:text;user-select:text}

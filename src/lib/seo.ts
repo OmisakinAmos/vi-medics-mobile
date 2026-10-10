@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 /** Public address of the site. Change VITE_SITE_URL (or this default) when a custom domain is added. */
 export const SITE_URL = (import.meta.env.VITE_SITE_URL ?? 'https://vi-medics.vercel.app').replace(/\/$/, '');
 export const SITE_NAME = 'Vi-Medics';
-export const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
+export const DEFAULT_IMAGE = 'https://raw.githubusercontent.com/OmisakinAmos/vi-medics-mobile/seo-marketing/public/og-image.png';
 
 export type Seo = {
   title: string;

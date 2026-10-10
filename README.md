@@ -78,3 +78,13 @@ npm run dev
 ## Security
 
 Never commit `.env` files, API secrets or private credentials. Use environment variables for all external-service configuration.
+
+## SEO (marketing)
+
+- **Real URLs**: `/products`, `/product/vm-001`, … (no `#/`). Old `#/…` links are upgraded automatically. `vercel.json` sends unknown paths to the app.
+- **Crawlable links**: navigation uses real `<a href>` via `src/components/Link.tsx`.
+- **Per-page meta**: `src/lib/seo.ts` (`useSeo`) sets title, description, canonical, Open Graph/Twitter tags and JSON-LD (Product, BreadcrumbList). Cart, checkout, login, account and confirmation are `noindex`.
+- **Sitemap/robots**: `/sitemap.xml` is generated live from Supabase by `api/sitemap.ts`; `public/robots.txt` blocks private pages.
+- **Domain**: set `VITE_SITE_URL` (and `SITE_URL` for the sitemap function), and update the URLs in `index.html` and `public/robots.txt`, when a custom domain is added.
+- **Known limit**: pages are rendered in the browser. Google runs JavaScript so it indexes them, but WhatsApp/LinkedIn link previews for individual products show the site-wide card. Prerendering product pages would fix that.
+- **After deploy**: add the site in Google Search Console and submit `https://vi-medics.vercel.app/sitemap.xml`.

@@ -14,6 +14,8 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { ProductDetails } from './pages/ProductDetails';
 import { Products } from './pages/Products';
+import { NotFound } from './pages/NotFound';
+import { SITE_NAME, breadcrumbLd, useSeo, type Seo } from './lib/seo';
 import type { CartItem, Product } from './types';
 
 const CART_KEY = 'vi-medics-cart';
@@ -27,7 +29,58 @@ function loadCart(): CartItem[] {
   }
 }
 
-const currentRoute = () => window.location.hash.replace('#', '') || '/';
+// Old hash links (#/products) are upgraded to real URLs (/products) so earlier shares keep working.
+if (window.location.hash.startsWith('#/')) {
+  window.history.replaceState({}, '', window.location.hash.slice(1));
+}
+
+const currentRoute = () => window.location.pathname.replace(/\/+$/, '') || '/';
+
+const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/confirmation'];
+const isKnown = (r: string) => KNOWN.includes(r) || /^\/product\/[^/]+$/.test(r);
+
+const PRIVATE: Record<string, string> = {
+  '/cart': 'Your cart',
+  '/checkout': 'Checkout',
+  '/login': 'Sign in or create an account',
+  '/account': 'My account and orders',
+  '/confirmation': 'Order confirmation',
+};
+
+/** Title/description for pages whose content does not depend on loaded data. Product pages set their own. */
+function pageSeo(route: string): Seo | null {
+  if (route === '/') {
+    return {
+      path: '/',
+      title: 'Vi-Medics | Medical Equipment for Clinics & Healthcare Professionals in Nigeria',
+      description: 'Buy dependable medical devices and equipment online in Nigeria. Clear pricing, live stock levels and secure checkout for clinics, diagnostic centres and healthcare professionals.',
+      jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }])],
+    };
+  }
+  if (route === '/products') {
+    return {
+      path: '/products',
+      title: `Medical Equipment Catalogue | ${SITE_NAME}`,
+      description: 'Browse monitoring, diagnostic, respiratory and mobility equipment with clear prices and stock levels. Supplies for clinics, diagnostic centres and healthcare professionals in Nigeria.',
+      jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Products', path: '/products' }])],
+    };
+  }
+  if (route === '/about') {
+    return {
+      path: '/about',
+      title: `About ${SITE_NAME} | Medical Equipment Supplier in Nigeria`,
+      description: 'Vi-Medics supplies medical devices and equipment to clinics, diagnostic centres, healthcare professionals and families, with clear product information and stock-aware ordering.',
+      jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])],
+    };
+  }
+  if (PRIVATE[route]) {
+    return { path: route, title: `${PRIVATE[route]} | ${SITE_NAME}`, description: 'Vi-Medics medical equipment store.', noindex: true };
+  }
+  if (!isKnown(route)) {
+    return { path: route, title: `Page not found | ${SITE_NAME}`, description: 'This page could not be found.', noindex: true };
+  }
+  return null; // product pages manage their own SEO
+}
 
 export function App() {
   const [route, setRoute] = useState(currentRoute());
@@ -38,10 +91,13 @@ export function App() {
   const { user } = useAuth();
 
   useEffect(() => {
-    const onHash = () => setRoute(currentRoute());
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
+    const onNav = () => setRoute(currentRoute());
+    window.addEventListener('popstate', onNav);
+    return () => window.removeEventListener('popstate', onNav);
   }, []);
+
+  useEffect(() => setMobileOpen(false), [route]);
+  useSeo(pageSeo(route));
 
   useEffect(() => {
     try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch { /* storage unavailable */ }
@@ -82,6 +138,7 @@ export function App() {
       {route === '/account' && <Account onNavigate={navigate} />}
       {route === '/about' && <About />}
       {route === '/confirmation' && <Confirmation order={lastOrder} onNavigate={navigate} />}
+      {!isKnown(route) && <NotFound />}
 
       <Footer onNavigate={navigate} />
       <BottomNav route={route} cartCount={cartCount} signedIn={Boolean(user)} onNavigate={navigate} />

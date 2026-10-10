@@ -1,7 +1,9 @@
+import { Link } from '../components/Link';
 import { ProductVisual } from '../components/ProductVisual';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
 import { useProduct } from '../hooks';
 import { money } from '../lib/format';
+import { SITE_NAME, SITE_URL, breadcrumbLd, useSeo } from '../lib/seo';
 import type { Navigate, Product } from '../types';
 
 function Spec({ label, value }: { label: string; value: string }) {
@@ -11,12 +13,50 @@ function Spec({ label, value }: { label: string; value: string }) {
 export function ProductDetails({ id, onNavigate, onAdd }: { id: string; onNavigate: Navigate; onAdd: (p: Product) => void }) {
   const { data: product, loading, error } = useProduct(id);
 
+  const path = `/product/${id}`;
+  useSeo(
+    product
+      ? {
+          path,
+          type: 'product',
+          title: `${product.name} (${product.brand}) | Buy in Nigeria | ${SITE_NAME}`,
+          description: `${(product.shortDescription ?? product.description).slice(0, 140).trim()} Price ${money(product.price)}. ${product.stockQuantity > 0 ? 'In stock' : 'Currently out of stock'}. ${product.warranty ? `Warranty: ${product.warranty}.` : ''}`.slice(0, 300),
+          image: product.imageUrl ?? undefined,
+          jsonLd: [
+            {
+              '@context': 'https://schema.org',
+              '@type': 'Product',
+              name: product.name,
+              description: product.description,
+              sku: product.id,
+              category: product.category,
+              brand: { '@type': 'Brand', name: product.brand },
+              model: product.model,
+              ...(product.imageUrl ? { image: [product.imageUrl] } : {}),
+              url: `${SITE_URL}${path}`,
+              offers: {
+                '@type': 'Offer',
+                url: `${SITE_URL}${path}`,
+                priceCurrency: 'NGN',
+                price: product.price,
+                availability: product.stockQuantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                itemCondition: 'https://schema.org/NewCondition',
+              },
+            },
+            breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Products', path: '/products' }, { name: product.name, path }]),
+          ],
+        }
+      : !loading
+        ? { path, title: `Product not found | ${SITE_NAME}`, description: 'This product may no longer be available.', noindex: true }
+        : null,
+  );
+
   if (loading) return <main className="page"><div className="container"><Loading label="Loading product…" /></div></main>;
   if (error) return <main className="page"><div className="container"><ErrorMessage message={error} /></div></main>;
   if (!product) {
     return (
       <main className="page"><div className="container">
-        <button className="breadcrumb" onClick={() => onNavigate('/products')}>← Back to products</button>
+        <Link to="/products" className="breadcrumb">← Back to products</Link>
         <div className="empty-state"><strong>Product not found</strong><p>This product may no longer be available.</p></div>
       </div></main>
     );
@@ -28,7 +68,7 @@ export function ProductDetails({ id, onNavigate, onAdd }: { id: string; onNaviga
 
   return (
     <main className="page"><div className="container">
-      <button className="breadcrumb" onClick={() => onNavigate('/products')}>← Back to products</button>
+      <Link to="/products" className="breadcrumb">← Back to products</Link>
       <div className="details-grid">
         <ProductVisual product={product} large />
         <div className="details-copy">

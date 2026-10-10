@@ -1,4 +1,5 @@
 import type { Navigate } from '../types';
+import { Link } from './Link';
 
 type Props = { route: string; signedIn: boolean; cartCount: number; mobileOpen: boolean; onToggleMenu: () => void; onNavigate: Navigate };
 
@@ -6,15 +7,14 @@ export function Header({ route, signedIn, cartCount, mobileOpen, onToggleMenu, o
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <button className="brand" onClick={() => onNavigate('/')} aria-label="Vi-Medics home">
+        <Link to="/" className="brand" aria-label="Vi-Medics home">
           <span className="brand-mark">V</span>
           <span><strong>VI-MEDICS</strong><small>Medical Equipment</small></span>
-        </button>
+        </Link>
         <nav className={`main-nav ${mobileOpen ? 'main-nav--open' : ''}`}>
-          <button className={route === '/' ? 'nav-active' : ''} onClick={() => onNavigate('/')}>Home</button>
-          <button className={route.startsWith('/products') ? 'nav-active' : ''} onClick={() => onNavigate('/products')}>Products</button>
-          <button onClick={() => onNavigate('/products')}>Categories</button>
-          <button onClick={() => onNavigate('/about')}>About</button>
+          <Link to="/" className={route === '/' ? 'nav-active' : ''}>Home</Link>
+          <Link to="/products" className={route.startsWith('/product') ? 'nav-active' : ''}>Products</Link>
+          <Link to="/about" className={route === '/about' ? 'nav-active' : ''}>About</Link>
         </nav>
         <div className="header-actions">
           <button className="icon-button search-button" aria-label="Search products" onClick={() => onNavigate('/products')}><span>⌕</span><em>Search</em></button>

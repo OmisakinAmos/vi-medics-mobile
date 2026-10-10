@@ -5,7 +5,7 @@ import { categories } from '../data/products';
 import { useProducts } from '../hooks';
 import type { Navigate, Product } from '../types';
 
-export function Products({ onNavigate, onAdd }: { onNavigate: Navigate; onAdd: (p: Product) => void }) {
+export function Products({ onAdd }: { onNavigate?: Navigate; onAdd: (p: Product) => void }) {
   const { data: products, loading, error } = useProducts();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
@@ -32,7 +32,7 @@ export function Products({ onNavigate, onAdd }: { onNavigate: Navigate; onAdd: (
           {error && <ErrorMessage message={error} />}
           {!loading && !error && <>
             <div className="results-top"><span>{filtered.length} products</span><span>Sort: Featured</span></div>
-            <div className="product-grid">{filtered.map((product) => <ProductCard key={product.id} product={product} onView={() => onNavigate(`/product/${product.id}`)} onAdd={() => onAdd(product)} />)}</div>
+            <div className="product-grid">{filtered.map((product) => <ProductCard key={product.id} product={product} onAdd={() => onAdd(product)} />)}</div>
             {filtered.length === 0 && <div className="empty-state"><strong>No products found</strong><p>Try another search or category.</p></div>}
           </>}
         </div>

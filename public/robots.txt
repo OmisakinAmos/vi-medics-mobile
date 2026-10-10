@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /cart
+Disallow: /checkout
+Disallow: /login
+Disallow: /account
+Disallow: /confirmation
+Disallow: /api/
+
+Sitemap: https://vi-medics.vercel.app/sitemap.xml

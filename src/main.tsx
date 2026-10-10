@@ -5,6 +5,7 @@ import { AuthProvider } from './auth';
 import { initNative } from './native';
 import './styles.css';
 import './mobile.css';
+import './seo.css';
 
 initNative();
 

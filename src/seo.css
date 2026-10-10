@@ -1,0 +1,12 @@
+/* Real <a> links styled to match the buttons they replaced (kept for crawlable navigation). */
+:where(a.link){color:inherit;text-decoration:none}
+.main-nav a{background:transparent;color:#52606d;font-size:14px;padding:28px 0}
+.main-nav a:hover,.main-nav a.nav-active{color:var(--blue);font-weight:700}
+.footer a.link{display:block;background:transparent;color:#9fb9bf;font-size:10px;line-height:1.7;padding:3px 0;text-align:left}
+.product-image-button{display:block}
+.product-name-heading{margin:0;font-size:inherit;font-weight:inherit}
+a.product-name{display:block}
+a.breadcrumb{display:inline-block}
+a.primary-button,a.outline-button,a.text-button{cursor:pointer}
+a.category-card{color:inherit}
+@media(max-width:720px){.main-nav a{padding:13px;text-align:left}}

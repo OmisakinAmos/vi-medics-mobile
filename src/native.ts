@@ -18,13 +18,14 @@ export function initNative(): void {
 
   // Android back button: go back through the app's pages, exit only from Home
   CapApp.addListener('backButton', () => {
-    const route = window.location.hash.replace('#', '') || '/';
+    const route = window.location.pathname.replace(/\/+$/, '') || '/';
     if (route === '/') {
       void CapApp.exitApp();
     } else if (window.history.length > 1) {
       window.history.back();
     } else {
-      window.location.hash = '/';
+      window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   });
 

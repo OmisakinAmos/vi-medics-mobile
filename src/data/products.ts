@@ -10,6 +10,12 @@ export const mockProducts: Product[] = [
   { id: 'vm-006', name: 'Folding Mobility Walker', category: 'Mobility', description: 'Lightweight folding walking aid designed for everyday mobility support.', price: 68000, stockQuantity: 6, brand: 'Vi-Medics', model: 'VM-MW-006', warranty: '12 months', visual: 'walker' },
   { id: 'vm-007', name: 'Manual Wheelchair', category: 'Mobility', description: 'Foldable manual wheelchair with comfortable seating and footrests.', price: 185000, stockQuantity: 4, brand: 'Vi-Medics', model: 'VM-WC-007', warranty: '18 months', visual: 'wheelchair' },
   { id: 'vm-008', name: 'Blood Glucose Meter Kit', category: 'Diagnostic', description: 'Portable blood glucose meter kit for routine blood glucose monitoring.', price: 29500, stockQuantity: 10, brand: 'Vi-Medics', model: 'VM-GM-008', warranty: '12 months', visual: 'glucose' },
+  { id: 'vm-009', name: 'Nitrile Examination Gloves (Box of 100)', category: 'Disposables', description: 'Powder-free disposable nitrile examination gloves, supplied in a box of 100. Single use.', price: 9500, stockQuantity: 40, brand: 'Vi-Medics', model: 'VM-DS-009', warranty: 'Single use', visual: 'disposable' },
+  { id: 'vm-010', name: 'Disposable Syringes 5 ml (Box of 100)', category: 'Disposables', description: 'Sterile single-use 5 ml syringes with needle, supplied in a box of 100. Single use only.', price: 7500, stockQuantity: 35, brand: 'Vi-Medics', model: 'VM-DS-010', warranty: 'Single use', visual: 'disposable' },
+  { id: 'vm-011', name: '3-Ply Disposable Face Masks (Box of 50)', category: 'Disposables', description: 'Three-layer disposable face masks with ear loops, supplied in a box of 50.', price: 3500, stockQuantity: 60, brand: 'Vi-Medics', model: 'VM-DS-011', warranty: 'Single use', visual: 'disposable' },
+  { id: 'vm-012', name: 'Sterile Gauze Swabs (Pack of 100)', category: 'Disposables', description: 'Sterile cotton gauze swabs for general wound care and clinical dressing use. Single use.', price: 2500, stockQuantity: 50, brand: 'Vi-Medics', model: 'VM-DS-012', warranty: 'Single use', visual: 'disposable' },
+  { id: 'vm-013', name: 'Alcohol Prep Pads (Box of 100)', category: 'Disposables', description: 'Individually wrapped isopropyl alcohol prep pads for skin cleaning before injections and sampling.', price: 3000, stockQuantity: 45, brand: 'Vi-Medics', model: 'VM-DS-013', warranty: 'Single use', visual: 'disposable' },
+  { id: 'vm-014', name: 'Disposable Couch Roll (Pack of 6)', category: 'Disposables', description: 'Disposable paper couch roll for examination couches, supplied as a pack of 6 rolls.', price: 4500, stockQuantity: 25, brand: 'Vi-Medics', model: 'VM-DS-014', warranty: 'Single use', visual: 'disposable' },
 ];
 
 export const categories: CategoryInfo[] = [
@@ -17,4 +23,5 @@ export const categories: CategoryInfo[] = [
   { name: 'Diagnostic', icon: '⌁', description: 'Clinical examination tools' },
   { name: 'Mobility', icon: '＋', description: 'Mobility support equipment' },
   { name: 'Respiratory', icon: '◌', description: 'Respiratory care equipment' },
+  { name: 'Disposables', icon: '▢', description: 'Disposable medical supplies' },
 ];

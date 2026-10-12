@@ -1,4 +1,4 @@
-export type Category = 'Monitoring' | 'Diagnostic' | 'Mobility' | 'Respiratory' | 'Disposables' | 'General';
+export type Category = 'Monitoring' | 'Diagnostic' | 'Mobility' | 'Respiratory' | 'Medical Consumables' | 'General';
 
 export type ProductStatus = 'active' | 'draft' | 'archived';
 

@@ -51,7 +51,7 @@ export function Services() {
 
       <div className="feature-panel service-note">
         <h2>Need equipment or supplies instead?</h2>
-        <p>Browse our medical equipment and disposable supplies, with clear prices and live stock levels.</p>
+        <p>Browse our medical equipment and consumables, with clear prices and live stock levels.</p>
         <Link to="/products" className="outline-button">Browse products →</Link>
       </div>
     </div></main>

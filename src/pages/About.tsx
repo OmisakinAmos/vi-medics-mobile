@@ -3,7 +3,7 @@ import { PHONE_DISPLAY, PHONE_TEL } from '../lib/contact';
 
 const pillars = [
   { icon: '◉', title: 'Medical equipment', text: 'Monitoring, diagnostic, respiratory and mobility equipment for clinics, diagnostic centres, healthcare professionals and homes.', to: '/products', cta: 'Shop equipment' },
-  { icon: '▢', title: 'Disposable supplies', text: 'Everyday disposable medical supplies such as gloves, syringes, masks and swabs, ready to reorder when stock runs low.', to: '/products', cta: 'Shop disposables' },
+  { icon: '▢', title: 'Medical consumables', text: 'Everyday medical consumables such as gloves, syringes, masks and swabs, ready to reorder when stock runs low.', to: '/products', cta: 'Shop disposables' },
   { icon: '🔧', title: 'Maintenance and servicing', text: 'Our biomedical engineering team repairs and maintains medical equipment so it stays in good working order.', to: '/services', cta: 'Request servicing' },
 ];
 
@@ -25,7 +25,7 @@ export function About() {
     <main className="page"><div className="container narrow">
       <span className="eyebrow">ABOUT VI-MEDICS</span>
       <h1>Medical equipment, supplies and servicing, in one place.</h1>
-      <p className="page-intro">Vi-Medics is a Lagos-based supplier of medical equipment and disposable medical supplies, with a biomedical engineering team that repairs and maintains equipment. We serve clinics, diagnostic centres, healthcare professionals and families across Nigeria.</p>
+      <p className="page-intro">Vi-Medics is a Lagos-based supplier of medical equipment and medical consumables, with a biomedical engineering team that repairs and maintains equipment. We serve clinics, diagnostic centres, healthcare professionals and families across Nigeria.</p>
 
       <section className="info-section">
         <h2>Who we are</h2>

@@ -62,7 +62,7 @@ function pageSeo(route: string): Seo | null {
     return {
       path: '/products',
       title: `Medical Equipment Catalogue | ${SITE_NAME}`,
-      description: 'Browse monitoring, diagnostic, respiratory and mobility equipment and disposable medical supplies with clear prices and stock levels. For clinics, diagnostic centres and healthcare professionals in Nigeria.',
+      description: 'Browse monitoring, diagnostic, respiratory and mobility equipment and medical consumables with clear prices and stock levels. For clinics, diagnostic centres and healthcare professionals in Nigeria.',
       jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Products', path: '/products' }])],
     };
   }
@@ -88,7 +88,7 @@ function pageSeo(route: string): Seo | null {
     return {
       path: '/about',
       title: `About ${SITE_NAME} | Medical Equipment, Supplies & Servicing in Nigeria`,
-      description: 'Vi-Medics is a Lagos-based supplier of medical equipment and disposable supplies, with a biomedical engineering team that repairs and maintains equipment for clinics, professionals and families.',
+      description: 'Vi-Medics is a Lagos-based supplier of medical equipment and medical consumables, with a biomedical engineering team that repairs and maintains equipment for clinics, professionals and families.',
       jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])],
     };
   }

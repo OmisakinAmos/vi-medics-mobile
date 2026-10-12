@@ -16,7 +16,7 @@ export function Products({ onAdd }: { onNavigate?: Navigate; onAdd: (p: Product)
   );
   return (
     <main className="page"><div className="container">
-      <div className="page-heading"><div><span className="eyebrow">CATALOGUE</span><h1>Medical equipment and supplies</h1><p>Browse devices, equipment and disposable supplies with clear pricing and stock information.</p></div></div>
+      <div className="page-heading"><div><span className="eyebrow">CATALOGUE</span><h1>Medical equipment and supplies</h1><p>Browse devices, equipment and medical consumables with clear pricing and stock information.</p></div></div>
       <div className="catalog-toolbar">
         <div className="search-field"><span>⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products, brands or categories..." /></div>
         <select value={category} onChange={(e) => setCategory(e.target.value)}><option>All</option>{categories.map((c) => <option key={c.name}>{c.name}</option>)}</select>

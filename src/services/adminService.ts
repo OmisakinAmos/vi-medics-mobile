@@ -5,13 +5,14 @@ import type { Category, OrderStatus, Product, ProductStatus } from '../types';
 
 export const ORDER_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
 export const PRODUCT_STATUSES: ProductStatus[] = ['active', 'draft', 'archived'];
-export const CATEGORY_NAMES: Category[] = ['Monitoring', 'Diagnostic', 'Mobility', 'Respiratory', 'Medical Consumables', 'General'];
+export const CATEGORY_NAMES: Category[] = ['Monitoring', 'Diagnostic', 'Mobility', 'Respiratory', 'Wound Care', 'Medical Consumables', 'General'];
 
 const VISUAL_BY_CATEGORY: Record<Category, string> = {
   Monitoring: 'bp',
   Diagnostic: 'stethoscope',
   Mobility: 'walker',
   Respiratory: 'nebulizer',
+  'Wound Care': 'plaster',
   'Medical Consumables': 'disposable',
   General: 'bp',
 };

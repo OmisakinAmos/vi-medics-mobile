@@ -64,7 +64,7 @@ function pageSeo(route: string): Seo | null {
     return {
       path: '/products',
       title: `Medical Equipment Catalogue | ${SITE_NAME}`,
-      description: 'Browse monitoring, diagnostic, respiratory and mobility equipment and medical consumables with clear prices and stock levels. For clinics, diagnostic centres and healthcare professionals in Nigeria.',
+      description: 'Browse monitoring, diagnostic, respiratory and mobility equipment, wound care and medical consumables with clear prices and stock levels. For clinics, diagnostic centres and healthcare professionals in Nigeria.',
       jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Products', path: '/products' }])],
     };
   }

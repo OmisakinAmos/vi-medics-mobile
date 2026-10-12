@@ -25,7 +25,7 @@ The first frontend milestone:
 
 - Responsive global navigation
 - Homepage hero, trust section, categories and featured products
-- Product catalogue with search and category filtering (Monitoring, Diagnostic, Mobility, Respiratory, Medical Consumables)
+- Product catalogue with search and category filtering (Monitoring, Diagnostic, Mobility, Respiratory, Wound Care, Medical Consumables)
 - `/services` page for the biomedical engineering service (equipment maintenance and servicing), handled by phone/WhatsApp enquiry rather than the cart
 - About page describing equipment, medical consumables and servicing
 - Product detail pages

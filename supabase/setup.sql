@@ -35,7 +35,7 @@ create trigger on_auth_user_created
 create table if not exists public.products (
   id                 text primary key,               -- e.g. 'vm-001'
   name               text not null,
-  category           text not null check (category in ('Monitoring','Diagnostic','Mobility','Respiratory','Medical Consumables','General')),
+  category           text not null check (category in ('Monitoring','Diagnostic','Mobility','Respiratory','Wound Care','Medical Consumables','General')),
   description        text not null,
   short_description  text,
   price              numeric(12,2) not null check (price >= 0),

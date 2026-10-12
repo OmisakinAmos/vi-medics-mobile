@@ -23,5 +23,6 @@ export const categories: CategoryInfo[] = [
   { name: 'Diagnostic', icon: '⌁', description: 'Clinical examination tools' },
   { name: 'Mobility', icon: '＋', description: 'Mobility support equipment' },
   { name: 'Respiratory', icon: '◌', description: 'Respiratory care equipment' },
+  { name: 'Wound Care', icon: '✚', description: 'Copper plasters and wound care supplies' },
   { name: 'Medical Consumables', icon: '▢', description: 'Gloves, syringes, masks and swabs' },
 ];

@@ -12,7 +12,7 @@ export async function GET(): Promise<Response> {
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-  const entries = [urlEntry('/', 'weekly', '1.0'), urlEntry('/products', 'daily', '0.9'), urlEntry('/about', 'monthly', '0.4')];
+  const entries = [urlEntry('/', 'weekly', '1.0'), urlEntry('/products', 'daily', '0.9'), urlEntry('/services', 'monthly', '0.7'), urlEntry('/about', 'monthly', '0.4')];
 
   if (supabaseUrl && anonKey) {
     try {

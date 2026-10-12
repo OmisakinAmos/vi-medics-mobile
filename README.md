@@ -25,7 +25,9 @@ The first frontend milestone:
 
 - Responsive global navigation
 - Homepage hero, trust section, categories and featured products
-- Product catalogue with search and category filtering
+- Product catalogue with search and category filtering (Monitoring, Diagnostic, Mobility, Respiratory, Disposables)
+- `/services` page for the biomedical engineering service (equipment maintenance and servicing), handled by phone/WhatsApp enquiry rather than the cart
+- About page describing equipment, disposables and servicing
 - Product detail pages
 - Shopping cart with quantity controls
 - Checkout UI
@@ -88,3 +90,6 @@ Never commit `.env` files, API secrets or private credentials. Use environment v
 - **Domain**: set `VITE_SITE_URL` (and `SITE_URL` for the sitemap function), and update the URLs in `index.html` and `public/robots.txt`, when a custom domain is added.
 - **Known limit**: pages are rendered in the browser. Google runs JavaScript so it indexes them, but WhatsApp/LinkedIn link previews for individual products show the site-wide card. Prerendering product pages would fix that.
 - **After deploy**: add the site in Google Search Console and submit `https://vi-medics.vercel.app/sitemap.xml`.
+
+## Categories and the Disposables migration
+Product categories are enforced by a check constraint in Supabase. After adding `Disposables`, run `supabase/migrations/002-disposables.sql` once in the Supabase SQL Editor (it updates the constraint and adds sample disposable products; prices and stock there are placeholders to edit). New installs using `supabase/setup.sql` already include it.

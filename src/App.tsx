@@ -14,8 +14,9 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { ProductDetails } from './pages/ProductDetails';
 import { Products } from './pages/Products';
+import { Services } from './pages/Services';
 import { NotFound } from './pages/NotFound';
-import { SITE_NAME, breadcrumbLd, useSeo, type Seo } from './lib/seo';
+import { SITE_NAME, SITE_URL, breadcrumbLd, useSeo, type Seo } from './lib/seo';
 import type { CartItem, Product } from './types';
 
 const CART_KEY = 'vi-medics-cart';
@@ -36,7 +37,7 @@ if (window.location.hash.startsWith('#/')) {
 
 const currentRoute = () => window.location.pathname.replace(/\/+$/, '') || '/';
 
-const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/confirmation'];
+const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/services', '/confirmation'];
 const isKnown = (r: string) => KNOWN.includes(r) || /^\/product\/[^/]+$/.test(r);
 
 const PRIVATE: Record<string, string> = {
@@ -61,15 +62,33 @@ function pageSeo(route: string): Seo | null {
     return {
       path: '/products',
       title: `Medical Equipment Catalogue | ${SITE_NAME}`,
-      description: 'Browse monitoring, diagnostic, respiratory and mobility equipment with clear prices and stock levels. Supplies for clinics, diagnostic centres and healthcare professionals in Nigeria.',
+      description: 'Browse monitoring, diagnostic, respiratory and mobility equipment and disposable medical supplies with clear prices and stock levels. For clinics, diagnostic centres and healthcare professionals in Nigeria.',
       jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Products', path: '/products' }])],
+    };
+  }
+  if (route === '/services') {
+    return {
+      path: '/services',
+      title: `Medical Equipment Maintenance & Servicing in Nigeria | ${SITE_NAME}`,
+      description: 'Biomedical engineering services from Vi-Medics: repair, preventive maintenance and inspection of medical equipment for clinics, diagnostic centres and healthcare professionals in Nigeria.',
+      jsonLd: [
+        breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Equipment Servicing', path: '/services' }]),
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          name: 'Medical equipment maintenance and servicing',
+          serviceType: 'Biomedical engineering, repair and maintenance of medical equipment',
+          areaServed: { '@type': 'Country', name: 'Nigeria' },
+          provider: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL, telephone: '+2348113867495' },
+        },
+      ],
     };
   }
   if (route === '/about') {
     return {
       path: '/about',
-      title: `About ${SITE_NAME} | Medical Equipment Supplier in Nigeria`,
-      description: 'Vi-Medics supplies medical devices and equipment to clinics, diagnostic centres, healthcare professionals and families, with clear product information and stock-aware ordering.',
+      title: `About ${SITE_NAME} | Medical Equipment, Supplies & Servicing in Nigeria`,
+      description: 'Vi-Medics is a Lagos-based supplier of medical equipment and disposable supplies, with a biomedical engineering team that repairs and maintains equipment for clinics, professionals and families.',
       jsonLd: [breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])],
     };
   }
@@ -137,6 +156,7 @@ export function App() {
       {route === '/login' && <Login onNavigate={navigate} onSuccess={() => { const to = postLogin.current; postLogin.current = '/account'; navigate(to); }} />}
       {route === '/account' && <Account onNavigate={navigate} />}
       {route === '/about' && <About />}
+      {route === '/services' && <Services />}
       {route === '/confirmation' && <Confirmation order={lastOrder} onNavigate={navigate} />}
       {!isKnown(route) && <NotFound />}
 

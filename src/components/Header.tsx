@@ -14,6 +14,7 @@ export function Header({ route, signedIn, cartCount, mobileOpen, onToggleMenu, o
         <nav className={`main-nav ${mobileOpen ? 'main-nav--open' : ''}`}>
           <Link to="/" className={route === '/' ? 'nav-active' : ''}>Home</Link>
           <Link to="/products" className={route.startsWith('/product') ? 'nav-active' : ''}>Products</Link>
+          <Link to="/services" className={route === '/services' ? 'nav-active' : ''}>Servicing</Link>
           <Link to="/about" className={route === '/about' ? 'nav-active' : ''}>About</Link>
         </nav>
         <div className="header-actions">

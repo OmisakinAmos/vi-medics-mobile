@@ -7,7 +7,13 @@ insert into public.products (id, name, category, description, price, stock_quant
   ('vm-005','Digital Medical Thermometer','Monitoring','Fast-reading digital thermometer with an easy-to-read display.',8500,31,'Vi-Medics','VM-TM-005','6 months','thermometer'),
   ('vm-006','Folding Mobility Walker','Mobility','Lightweight folding walking aid designed for everyday mobility support.',68000,6,'Vi-Medics','VM-MW-006','12 months','walker'),
   ('vm-007','Manual Wheelchair','Mobility','Foldable manual wheelchair with comfortable seating and footrests.',185000,4,'Vi-Medics','VM-WC-007','18 months','wheelchair'),
-  ('vm-008','Blood Glucose Meter Kit','Diagnostic','Portable blood glucose meter kit for routine blood glucose monitoring.',29500,10,'Vi-Medics','VM-GM-008','12 months','glucose')
+  ('vm-008','Blood Glucose Meter Kit','Diagnostic','Portable blood glucose meter kit for routine blood glucose monitoring.',29500,10,'Vi-Medics','VM-GM-008','12 months','glucose'),
+  ('vm-009','Nitrile Examination Gloves (Box of 100)','Disposables','Powder-free disposable nitrile examination gloves, supplied in a box of 100. Single use.',9500,40,'Vi-Medics','VM-DS-009','Single use','disposable'),
+  ('vm-010','Disposable Syringes 5 ml (Box of 100)','Disposables','Sterile single-use 5 ml syringes with needle, supplied in a box of 100. Single use only.',7500,35,'Vi-Medics','VM-DS-010','Single use','disposable'),
+  ('vm-011','3-Ply Disposable Face Masks (Box of 50)','Disposables','Three-layer disposable face masks with ear loops, supplied in a box of 50.',3500,60,'Vi-Medics','VM-DS-011','Single use','disposable'),
+  ('vm-012','Sterile Gauze Swabs (Pack of 100)','Disposables','Sterile cotton gauze swabs for general wound care and clinical dressing use. Single use.',2500,50,'Vi-Medics','VM-DS-012','Single use','disposable'),
+  ('vm-013','Alcohol Prep Pads (Box of 100)','Disposables','Individually wrapped isopropyl alcohol prep pads for skin cleaning before injections and sampling.',3000,45,'Vi-Medics','VM-DS-013','Single use','disposable'),
+  ('vm-014','Disposable Couch Roll (Pack of 6)','Disposables','Disposable paper couch roll for examination couches, supplied as a pack of 6 rolls.',4500,25,'Vi-Medics','VM-DS-014','Single use','disposable')
 on conflict (id) do update set
   name = excluded.name, category = excluded.category, description = excluded.description,
   price = excluded.price, stock_quantity = excluded.stock_quantity, brand = excluded.brand,

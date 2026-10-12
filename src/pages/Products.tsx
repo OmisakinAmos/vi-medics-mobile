@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from '../components/Link';
 import { ProductCard } from '../components/ProductCard';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
 import { categories } from '../data/products';
@@ -15,7 +16,7 @@ export function Products({ onAdd }: { onNavigate?: Navigate; onAdd: (p: Product)
   );
   return (
     <main className="page"><div className="container">
-      <div className="page-heading"><div><span className="eyebrow">CATALOGUE</span><h1>Medical equipment</h1><p>Browse devices and equipment with clear pricing and stock information.</p></div></div>
+      <div className="page-heading"><div><span className="eyebrow">CATALOGUE</span><h1>Medical equipment and supplies</h1><p>Browse devices, equipment and disposable supplies with clear pricing and stock information.</p></div></div>
       <div className="catalog-toolbar">
         <div className="search-field"><span>⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products, brands or categories..." /></div>
         <select value={category} onChange={(e) => setCategory(e.target.value)}><option>All</option>{categories.map((c) => <option key={c.name}>{c.name}</option>)}</select>
@@ -25,6 +26,7 @@ export function Products({ onAdd }: { onNavigate?: Navigate; onAdd: (p: Product)
           <strong>Categories</strong>
           <button className={category === 'All' ? 'filter-active' : ''} onClick={() => setCategory('All')}>All products</button>
           {categories.map((c) => <button key={c.name} className={category === c.name ? 'filter-active' : ''} onClick={() => setCategory(c.name)}>{c.name}</button>)}
+          <div className="filter-note"><strong>Equipment servicing</strong><p>Need equipment repaired or maintained? <Link to="/services">See our biomedical engineering service</Link>.</p></div>
           <div className="filter-note"><strong>Stock visibility</strong><p>Products show current stock levels. Out-of-stock products cannot be added to the cart.</p></div>
         </aside>
         <div className="catalog-results">

@@ -3,7 +3,7 @@
 
 @media(max-width:720px){
   body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
-  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgba(16,42,67,.06)}
+  .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgba(16,42,67,.06)}
   .bottom-nav button{background:transparent;color:var(--muted);display:grid;justify-items:center;gap:2px;font-size:10px;font-weight:600;padding:6px 0;min-height:48px}
   .bottom-nav-icon{position:relative;font-size:19px;line-height:1.1}
   .bottom-nav-icon b{position:absolute;top:-5px;right:-12px;background:var(--teal);color:#fff;border-radius:99px;min-width:16px;height:16px;font-size:9px;display:grid;place-items:center;padding:0 3px}

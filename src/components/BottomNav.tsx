@@ -7,6 +7,7 @@ export function BottomNav({ route, cartCount, signedIn, onNavigate }: Props) {
   const tabs = [
     { path: '/', label: 'Home', icon: '⌂', active: route === '/' },
     { path: '/products', label: 'Shop', icon: '▦', active: route.startsWith('/product') },
+    { path: '/services', label: 'Servicing', icon: '🔧', active: route === '/services' },
     { path: '/cart', label: 'Cart', icon: '🛒', active: route === '/cart' || route === '/checkout' },
     { path: signedIn ? '/account' : '/login', label: signedIn ? 'Account' : 'Sign in', icon: '◯', active: route === '/account' || route === '/login' },
   ];

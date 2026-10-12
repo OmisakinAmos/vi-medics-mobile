@@ -6,6 +6,7 @@ import { BottomNav } from './components/BottomNav';
 import { Header } from './components/Header';
 import { go } from './lib/format';
 import { About } from './pages/About';
+import { Admin } from './pages/Admin';
 import { Account } from './pages/Account';
 import { Cart } from './pages/Cart';
 import { Checkout } from './pages/Checkout';
@@ -37,7 +38,7 @@ if (window.location.hash.startsWith('#/')) {
 
 const currentRoute = () => window.location.pathname.replace(/\/+$/, '') || '/';
 
-const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/services', '/confirmation'];
+const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/services', '/admin', '/confirmation'];
 const isKnown = (r: string) => KNOWN.includes(r) || /^\/product\/[^/]+$/.test(r);
 
 const PRIVATE: Record<string, string> = {
@@ -45,6 +46,7 @@ const PRIVATE: Record<string, string> = {
   '/checkout': 'Checkout',
   '/login': 'Sign in or create an account',
   '/account': 'My account and orders',
+  '/admin': 'Admin',
   '/confirmation': 'Order confirmation',
 };
 
@@ -156,6 +158,7 @@ export function App() {
       {route === '/login' && <Login onNavigate={navigate} onSuccess={() => { const to = postLogin.current; postLogin.current = '/account'; navigate(to); }} />}
       {route === '/account' && <Account onNavigate={navigate} />}
       {route === '/about' && <About />}
+      {route === '/admin' && <Admin onNavigate={navigate} onRequireLogin={() => requireLogin('/admin')} />}
       {route === '/services' && <Services />}
       {route === '/confirmation' && <Confirmation order={lastOrder} onNavigate={navigate} />}
       {!isKnown(route) && <NotFound />}

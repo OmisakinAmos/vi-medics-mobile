@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
 import { money } from '../lib/format';
+import { checkIsAdmin } from '../services/adminService';
 import { listMyOrders } from '../services/orderService';
 import type { Navigate, Order } from '../types';
 
@@ -13,6 +14,14 @@ export function Account({ onNavigate }: { onNavigate: Navigate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setIsAdmin(false); return; }
+    let active = true;
+    checkIsAdmin().then((ok) => active && setIsAdmin(ok)).catch(() => undefined);
+    return () => { active = false; };
+  }, [user?.id]);
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
@@ -45,6 +54,7 @@ export function Account({ onNavigate }: { onNavigate: Navigate }) {
         <aside className="account-menu">
           <div className="account-avatar">{initials}</div><strong>{name}</strong><small>{user.email}</small>
           <button className="filter-active">My Orders</button>
+          {isAdmin && <button onClick={() => onNavigate('/admin')}>Admin</button>}
           <button onClick={async () => { await signOut(); onNavigate('/'); }}>Logout</button>
         </aside>
         <section className="orders">

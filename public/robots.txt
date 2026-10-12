@@ -4,6 +4,7 @@ Disallow: /cart
 Disallow: /checkout
 Disallow: /login
 Disallow: /account
+Disallow: /admin
 Disallow: /confirmation
 Disallow: /api/
 

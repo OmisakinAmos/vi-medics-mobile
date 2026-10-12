@@ -93,3 +93,6 @@ Never commit `.env` files, API secrets or private credentials. Use environment v
 
 ## Categories and the Medical Consumables migration
 Product categories are enforced by a check constraint in Supabase. After adding `Medical Consumables`, run `supabase/migrations/002-medical-consumables.sql` once in the Supabase SQL Editor (it updates the constraint and adds sample disposable products; prices and stock there are placeholders to edit). New installs using `supabase/setup.sql` already include it.
+
+## Admin area (/admin)
+Admins manage products (including descriptions and photo upload), view customers and orders, and update order status. Access is decided by the database: `supabase/migrations/003-admin.sql` creates a locked `admins` table, an `is_admin()` function and admin-only RLS policies, and makes the store owner's email an admin. To add another admin, insert their auth user id into `public.admins` in the SQL Editor. The page is `noindex`, disallowed in `robots.txt`, and only shown in My Account for admins.

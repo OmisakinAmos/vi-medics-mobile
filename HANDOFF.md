@@ -24,6 +24,8 @@
 - PENDING (user is preparing): real list of products, images and prices. Plan = user sends name, category, price, stock quantity, brand/model/warranty and photos; images go in the public Supabase Storage bucket `product-images` named by product id (e.g. vm-009.jpg), then `image_url` is set as above; update prices/stock with SQL (`update public.products set price=..., stock_quantity=... where id=...`) and keep supabase/seed.sql, supabase/setup.sql and src/data/products.ts in sync. Do not invent medical claims; keep descriptions to supplied product information.
 - Other open items: Search Console indexing requests (quota) and sitemap status check; custom domain vi-medics.ng later (then Mailgun verified domain); check the latest APK build before treating it as the submission APK (submitted link is build-2).
 
+- 2026-10-12 (later): Admin area built at /admin (src/pages/Admin.tsx, src/pages/admin/*, src/services/adminService.ts). Needs supabase/migrations/003-admin.sql run once in Supabase; owner email olutimilehinamos@gmail.com becomes admin if that account exists. Admin table is separate from profiles on purpose (customers can edit their own profile row).
+
 ## Original to-do list (mostly done)
 1. Create Supabase project; run `supabase/setup.sql` (schema + seed) in the SQL Editor.
 2. Supabase -> Authentication -> Providers -> Email: turn OFF "Confirm email" (or keep on and handle the confirm flow).

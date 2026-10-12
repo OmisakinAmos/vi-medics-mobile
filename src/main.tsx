@@ -6,6 +6,7 @@ import { initNative } from './native';
 import './styles.css';
 import './mobile.css';
 import './seo.css';
+import './admin.css';
 
 initNative();
 

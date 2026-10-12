@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Vi-Medics</string>
+    <string name="title_activity_main">Vi-Medics</string>
+    <string name="package_name">com.vimedics.app</string>
+    <string name="custom_url_scheme">com.vimedics.app</string>
+</resources>

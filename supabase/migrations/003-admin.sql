@@ -19,8 +19,9 @@ as $$
   select exists (select 1 from public.admins where user_id = auth.uid());
 $$;
 
-revoke all on function public.is_admin() from public, anon;
-grant execute on function public.is_admin() to authenticated;
+-- anon needs execute too: the products policy calls is_admin() for logged-out shoppers (it simply returns false for them).
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to anon, authenticated;
 
 -- Products: admins can see every product (including hidden ones) and add, edit or archive them.
 drop policy if exists "Admins manage products" on public.products;

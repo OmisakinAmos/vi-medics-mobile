@@ -7,7 +7,7 @@
   .bottom-nav button{background:transparent;color:var(--muted);display:grid;justify-items:center;gap:2px;font-size:10px;font-weight:600;padding:6px 0;min-height:48px}
   .bottom-nav-icon{position:relative;font-size:19px;line-height:1.1}
   .bottom-nav-icon b{position:absolute;top:-5px;right:-12px;background:var(--teal);color:#fff;border-radius:99px;min-width:16px;height:16px;font-size:9px;display:grid;place-items:center;padding:0 3px}
-  .bottom-nav button.bottom-nav-active{color:var(--blue);font-weight:800}
+  .bottom-nav button.bottom-nav-active{color:var(--blue);font-weight:800;box-shadow:inset 0 3px 0 var(--copper)}
   /* the tab bar replaces the header cart/account/menu shortcuts */
   .site-header .header-actions,.site-header .mobile-menu{display:none}
   .site-header{padding-top:env(safe-area-inset-top)}

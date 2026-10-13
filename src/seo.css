@@ -41,3 +41,17 @@ a.category-card{color:inherit}
 /* Logo image in the header */
 .brand-logo{display:block;height:42px;width:auto}
 @media(max-width:720px){.brand-logo{height:36px}}
+
+/* Brand copper (from the logo's stethoscope). Used for accents only; text uses the deeper shade for contrast. */
+:root{--copper:#b86e3c;--copper-deep:#9a5a2c;--copper-light:#e3a679}
+.eyebrow{color:var(--copper-deep)}
+.hero h1 span{color:var(--copper)}
+.trust-grid b{color:var(--copper-deep)}
+.cart-button b{background:var(--copper-deep)}
+.main-nav a.nav-active{box-shadow:inset 0 -3px 0 var(--copper)}
+.category-card:hover{border-color:#e3b99a}
+.footer-brand{color:var(--copper-light)}
+.step-list li>span{background:var(--copper-deep)}
+.info-icon{color:var(--copper-deep);background:#f8ece3}
+.service-cta .outline-button:hover,.outline-button:hover{border-color:var(--copper)}
+@media(max-width:720px){.main-nav a.nav-active{box-shadow:none;border-left:3px solid var(--copper)}}

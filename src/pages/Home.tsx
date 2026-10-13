@@ -8,6 +8,7 @@ import type { Navigate, Product } from '../types';
 
 export function Home({ onAdd }: { onNavigate?: Navigate; onAdd: (p: Product) => void }) {
   const { data: products, loading, error } = useProducts();
+  const featured = products.find((p) => p.id === 'vm-001' && p.imageUrl) ?? products.find((p) => p.imageUrl);
   return (
     <main>
       <section className="hero">
@@ -19,7 +20,19 @@ export function Home({ onAdd }: { onNavigate?: Navigate; onAdd: (p: Product) => 
             <div className="hero-actions"><Link to="/products" className="primary-button">Shop Products <span>→</span></Link><Link to="/products" className="text-button">Explore categories</Link></div>
             <div className="hero-trust"><span>✓ Clear product information</span><span>✓ Stock visibility</span><span>✓ Secure checkout</span></div>
           </div>
-          <div className="hero-art"><div className="art-card art-card-back"><span>MEDICAL</span></div><div className="art-card art-card-front"><div className="hero-device"><div className="hero-screen">120<span>/80</span><small>mmHg</small></div><div className="hero-cuff" /></div><div className="art-caption"><span>Featured device</span><strong>Digital BP Monitor</strong></div></div><div className="floating-chip chip-one">✓ In stock</div><div className="floating-chip chip-two">Trusted shopping</div></div>
+          <div className="hero-art"><div className="art-card art-card-back"><span>MEDICAL</span></div><div className="art-card art-card-front">
+            {featured ? (
+              <Link to={`/product/${featured.id}`} className="hero-photo" aria-label={`View ${featured.name}`}><img src={featured.imageUrl ?? ''} alt={featured.name} /></Link>
+            ) : loading ? (
+              <div className="hero-device hero-photo-loading" />
+            ) : (
+              <div className="hero-device"><div className="hero-screen">120<span>/80</span><small>mmHg</small></div><div className="hero-cuff" /></div>
+            )}
+            <div className="art-caption"><span>Featured device</span><strong>{featured ? featured.name : 'Digital BP Monitor'}</strong></div></div>
+            {featured && featured.stockQuantity <= 0
+              ? <div className="floating-chip chip-one" style={{ color: 'var(--danger, #b42318)' }}>Out of stock</div>
+              : <div className="floating-chip chip-one">✓ In stock</div>}
+            <div className="floating-chip chip-two">Trusted shopping</div></div>
         </div>
       </section>
 

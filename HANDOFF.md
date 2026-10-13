@@ -9,7 +9,7 @@
 ## Decisions
 - Auth: email + password only (Supabase Auth). Google OAuth dropped.
 - Orders are created only via the `place_order()` database function (stock check, prices from DB). Clients cannot insert orders directly.
-- Email confirmation: `api/send-confirmation.ts` (Vercel function -> Mailgun). Skips silently until MAILGUN_API_KEY and MAILGUN_DOMAIN are set.
+- Email confirmation: `api/send-receipt.ts` (Vercel function -> Mailgun; replaces send-confirmation.ts). Skips silently until MAILGUN_API_KEY and MAILGUN_DOMAIN are set.
 
 ## Update 2026-10-03
 - Supabase connected (env vars set in Vercel). Sign up/in, logout, place order verified working by the user.
@@ -33,3 +33,8 @@
 4. Test end to end: sign up -> add to cart -> checkout -> order saved -> Logout -> sign in -> order still in My Orders. Also test an over-stock quantity.
 5. Optional: Mailgun keys (MAILGUN_API_KEY, MAILGUN_DOMAIN; sandbox domains only email authorised recipients).
 6. Known gaps: cart is not persisted across reloads; product-page quantity selector buttons are decorative; no real tsc/vite build was run locally; no Playwright tests yet.
+
+- 2026-10-13: Bank-transfer checkout + receipts + admin reports/audit. Needs supabase/migrations/006-payments-reports-audit.sql run in Supabase, then bank details entered in Admin -> Payment settings.
+  Flow: Checkout "Pay by bank transfer" -> place_order (status pending, payment awaiting, stock reserved) -> /payment shows bank details from store_settings -> "I have paid" calls report_payment() and api/send-receipt.ts emails a branded receipt -> /confirmation shows the receipt (print/PDF).
+  Admin (Orders tab): Confirm payment (payment_status confirmed, pending -> confirmed), Mark delivered (sets delivered_at), cancel returns stock and cannot be reopened. Reports tab (period KPIs, status/payment bars, best sellers, stock to watch, CSV). Audit trail tab reads audit_log (written by DB triggers + log_event for sign-in/out; admin read-only, no edit/delete). Payment settings tab edits bank details (changes are audited).
+  Mailgun sandbox only delivers to authorised recipients: receipts to other customers need a verified sending domain. Unpaid orders keep stock reserved until the admin cancels them (cancelling returns the stock).

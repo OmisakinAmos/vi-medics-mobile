@@ -11,3 +11,12 @@ export function go(path: string) {
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+export const formatDateTime = (iso: string) =>
+  new Date(iso).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Lagos' });
+
+export const PAYMENT_LABEL: Record<'awaiting' | 'reported' | 'confirmed', string> = {
+  awaiting: 'Awaiting payment',
+  reported: 'Payment reported',
+  confirmed: 'Payment confirmed',
+};

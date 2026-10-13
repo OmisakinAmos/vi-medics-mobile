@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { isSupabaseConfigured, supabase } from './lib/supabase';
+import { logEvent } from './services/auditService';
 
 type AuthResult = { error: string | null; needsConfirmation?: boolean };
 
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn: AuthContextValue['signIn'] = async (email, password) => {
     if (!supabase) return { error: 'Authentication is not configured.' };
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!error) await logEvent('auth.sign_in');
     return { error: error ? error.message : null };
   };
 
@@ -44,7 +46,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    if (supabase) await supabase.auth.signOut();
+    if (supabase) {
+      await logEvent('auth.sign_out');
+      await supabase.auth.signOut();
+    }
   };
 
   return (

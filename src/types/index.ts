@@ -35,14 +35,26 @@ export type OrderItem = {
   quantity: number;
 };
 
+export type PaymentStatus = 'awaiting' | 'reported' | 'confirmed';
+
 export type Order = {
   id: string;
   orderNumber: string;
   status: OrderStatus;
+  paymentStatus: PaymentStatus;
   subtotal: number;
   deliveryFee: number;
   total: number;
   createdAt: string;
+  paidReportedAt: string | null;
+  deliveredAt: string | null;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
   items: OrderItem[];
 };
 

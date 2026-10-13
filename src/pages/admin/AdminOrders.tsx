@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ErrorMessage, Loading } from '../../components/StatusMessage';
-import { money } from '../../lib/format';
-import { ORDER_STATUSES, adminListOrders, adminUpdateOrderStatus, type AdminOrder } from '../../services/adminService';
+import { PAYMENT_LABEL, formatDateTime, money } from '../../lib/format';
+import { ORDER_STATUSES, adminConfirmPayment, adminListOrders, adminUpdateOrderStatus, type AdminOrder } from '../../services/adminService';
 import type { OrderStatus } from '../../types';
-
-const formatDate = (iso: string) => new Date(iso).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
 export function AdminOrders() {
   const [orders, setOrders] = useState<AdminOrder[]>([]);
@@ -17,6 +15,7 @@ export function AdminOrders() {
 
   const load = () => {
     setLoading(true);
+    setBusy(null);
     adminListOrders()
       .then((o) => { setOrders(o); setError(null); })
       .catch((e: Error) => setError(e.message))
@@ -30,10 +29,22 @@ export function AdminOrders() {
   );
 
   const setStatus = async (id: string, status: OrderStatus) => {
+    if (status === 'cancelled' && !window.confirm('Cancel this order? The reserved stock goes back on the shelf and a cancelled order cannot be reopened.')) return;
     setBusy(id);
-    try { await adminUpdateOrderStatus(id, status); setOrders((list) => list.map((o) => (o.id === id ? { ...o, status } : o))); }
-    catch (e) { setError((e as Error).message); }
-    finally { setBusy(null); }
+    try { await adminUpdateOrderStatus(id, status); load(); }
+    catch (e) { setError((e as Error).message); setBusy(null); }
+  };
+
+  const confirmPayment = async (o: AdminOrder) => {
+    if (!window.confirm(`Confirm that ${money(o.total)} for order ${o.orderNumber} has reached the bank account?`)) return;
+    setBusy(o.id);
+    try { await adminConfirmPayment(o.id, o.status); load(); }
+    catch (e) { setError((e as Error).message); setBusy(null); }
+  };
+
+  const markDelivered = async (o: AdminOrder) => {
+    if (o.paymentStatus !== 'confirmed' && !window.confirm('Payment for this order is not confirmed yet. Mark it as delivered anyway?')) return;
+    await setStatus(o.id, 'delivered');
   };
 
   return (
@@ -54,16 +65,20 @@ export function AdminOrders() {
             <div className="admin-row">
               <div className="admin-row-main">
                 <strong>#{o.orderNumber} · {money(o.total)}</strong>
-                <span>{o.customerName} · {formatDate(o.createdAt)}</span>
+                <span>{o.customerName} · {formatDateTime(o.createdAt)}</span>
+                <span><i className={`pay-badge pay-${o.status === 'cancelled' ? 'cancelled' : o.paymentStatus}`}>{o.status === 'cancelled' ? 'Cancelled' : PAYMENT_LABEL[o.paymentStatus]}</i>{o.deliveredAt && <> · Delivered {formatDateTime(o.deliveredAt)}</>}</span>
               </div>
               <select aria-label={`Status of order ${o.orderNumber}`} value={o.status} disabled={busy === o.id} onChange={(e) => setStatus(o.id, e.target.value as OrderStatus)}>
                 {ORDER_STATUSES.map((s) => <option key={s}>{s}</option>)}
               </select>
+              {o.status !== 'cancelled' && o.paymentStatus !== 'confirmed' && <button className="outline-button" disabled={busy === o.id} onClick={() => confirmPayment(o)}>Confirm payment</button>}
+              {o.status !== 'cancelled' && o.status !== 'delivered' && <button className="primary-button admin-deliver" disabled={busy === o.id} onClick={() => markDelivered(o)}>Mark delivered</button>}
               <button className="outline-button" onClick={() => setOpenId(openId === o.id ? null : o.id)}>{openId === o.id ? 'Hide' : 'Details'}</button>
             </div>
             {openId === o.id && (
               <div className="admin-details">
                 <p><strong>Customer:</strong> {o.customerName}<br /><a href={`mailto:${o.customerEmail}`}>{o.customerEmail}</a> · <a href={`tel:${o.customerPhone}`}>{o.customerPhone}</a></p>
+                <p><strong>Payment:</strong> Bank transfer · {PAYMENT_LABEL[o.paymentStatus]}{o.paidReportedAt && <> · reported {formatDateTime(o.paidReportedAt)}</>}{o.paymentConfirmedAt && <> · confirmed {formatDateTime(o.paymentConfirmedAt)}</>}</p>
                 <p><strong>Deliver to:</strong> {o.address}, {o.city}, {o.state}</p>
                 <div className="summary">
                   {o.items.map((i) => <div key={i.id}><span>{i.productName} × {i.quantity}</span><strong>{money(i.unitPrice * i.quantity)}</strong></div>)}

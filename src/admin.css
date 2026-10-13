@@ -38,3 +38,32 @@
 .admin-stat strong{font-size:20px}
 .admin-stat small,.admin-stat span{color:var(--muted);font-size:12px}
 @media(max-width:720px){.admin-row{flex-wrap:wrap}.admin-customer{align-items:flex-start}.admin-add{width:100%}}
+
+/* Orders: payment + delivery actions */
+.admin-deliver{margin-top:0;padding:10px 16px;font-size:14px}
+.admin-order .admin-row .outline-button{white-space:nowrap}
+
+/* Reports */
+.report-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.report-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:4px}
+.report-kpi span{color:var(--muted);font-size:13px}
+.report-kpi strong{font-size:22px;color:var(--blue);overflow-wrap:anywhere}
+.report-kpi small{color:var(--muted);font-size:12px}
+.report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.report-grid .form-card h2{margin-top:0;font-size:17px}
+.report-bars{display:grid;gap:10px}
+.report-bar-row{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;gap:10px;align-items:center;font-size:13px}
+.report-bar-label{overflow-wrap:anywhere}
+.report-bar-track{height:10px;background:var(--soft);border-radius:99px;overflow:hidden}
+.report-bar-fill{display:block;height:100%;background:var(--blue);border-radius:99px;min-width:2px}
+.report-stock{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.report-stock .pay-badge{margin-top:0;white-space:nowrap}
+
+/* Audit trail */
+.audit-row{width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.audit-admin{background:#fdf1e8;color:var(--copper-deep,#9a5a2c)}
+.audit-customer{background:#e8f1fb;color:#1d5fa8}
+.audit-system{background:#eef1f4;color:var(--muted)}
+.audit-details{background:var(--soft);border-radius:10px;padding:12px;font-size:12px;line-height:1.5;overflow:auto;max-height:260px;margin:0}
+.admin-date{height:45px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;color:var(--ink)}
+@media(max-width:720px){.report-kpis{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr}}

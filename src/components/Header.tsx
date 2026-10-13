@@ -8,8 +8,7 @@ export function Header({ route, signedIn, cartCount, mobileOpen, onToggleMenu, o
     <header className="site-header">
       <div className="container header-inner">
         <Link to="/" className="brand" aria-label="Vi-Medics home">
-          <span className="brand-mark">V</span>
-          <span><strong>VI-MEDICS</strong><small>Medical Equipment</small></span>
+          <img src="/logo.png" alt="Vi-Medics" className="brand-logo" width="126" height="42" />
         </Link>
         <nav className={`main-nav ${mobileOpen ? 'main-nav--open' : ''}`}>
           <Link to="/" className={route === '/' ? 'nav-active' : ''}>Home</Link>

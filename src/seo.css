@@ -37,3 +37,7 @@ a.category-card{color:inherit}
 .service-note p{margin:0 0 16px;color:var(--muted);line-height:1.65}
 .service-note a:not([class*="button"]){color:var(--blue);font-weight:700}
 @media(max-width:720px){.info-grid{grid-template-columns:1fr}.service-cta>*{width:100%;justify-content:center;text-align:center}.info-section{margin-top:34px}}
+
+/* Logo image in the header */
+.brand-logo{display:block;height:42px;width:auto}
+@media(max-width:720px){.brand-logo{height:36px}}

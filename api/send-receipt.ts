@@ -2,8 +2,6 @@
 // The caller must send their Supabase access token; the order is read with that token,
 // so row level security guarantees users can only trigger receipts for their own orders.
 
-import { LOGO_PNG_BASE64 } from './_logo';
-
 type OrderItem = { product_name: string; unit_price: number; quantity: number };
 type Order = {
   order_number: number; created_at: string; paid_reported_at: string | null; payment_status: 'awaiting' | 'reported' | 'confirmed';
@@ -174,3 +172,6 @@ ${rows}
   console.error('Mailgun rejected receipt', mg.status, detail);
   return json({ error: 'Mailgun rejected the request', status: mg.status, detail }, 502);
 }
+
+// Vi-Medics logo (330px wide, flattened on white), bundled in this file so the email can attach it inline.
+const LOGO_PNG_BASE64 =

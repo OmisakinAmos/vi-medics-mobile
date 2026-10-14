@@ -59,7 +59,7 @@ export async function POST(request: Request): Promise<Response> {
     `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=order_number,created_at,paid_reported_at,payment_status,customer_name,customer_email,customer_phone,address,city,state,country,subtotal,delivery_fee,total,order_items(product_name,unit_price,quantity)`,
     { headers: { apikey: anonKey, Authorization: `Bearer ${token}` } },
   );
-  if (!res.ok) return json({ error: 'Could not load order' }, 401);
+  if (!res.ok) return json({ error: 'Could not load order', detail: `orders ${res.status}` }, 401);
   const [order] = (await res.json()) as Order[];
   if (!order) return json({ error: 'Order not found' }, 404);
   if (order.payment_status === 'awaiting') return json({ error: 'Payment has not been reported for this order' }, 409);
@@ -71,8 +71,9 @@ export async function POST(request: Request): Promise<Response> {
     body: JSON.stringify({ p_order_id: orderId }),
   });
   // 404 = migration 007 not applied yet; keep receipts working until it is.
-  if (claim.status !== 404 && (!claim.ok || (await claim.json().catch(() => false)) !== true)) {
-    return json({ skipped: 'A receipt for this order was sent recently' });
+  if (claim.status !== 404) {
+    const claimed = claim.ok ? await claim.json().catch(() => false) : false;
+    if (claimed !== true) return json({ skipped: 'A receipt for this order was sent recently', detail: `claim ${claim.status} ${claimed}` });
   }
 
   // The logo travels inside the email (inline attachment), because mail apps hide pictures loaded from the web
@@ -168,5 +169,8 @@ ${rows}
     headers: { Authorization: `Basic ${btoa(`api:${mailgunKey}`)}` },
     body: form,
   });
-  return mg.ok ? json({ sent: true }) : json({ error: 'Mailgun rejected the request', status: mg.status }, 502);
+  if (mg.ok) return json({ sent: true });
+  const detail = (await mg.text().catch(() => '')).slice(0, 160);
+  console.error('Mailgun rejected receipt', mg.status, detail);
+  return json({ error: 'Mailgun rejected the request', status: mg.status, detail }, 502);
 }

@@ -3,7 +3,7 @@ import { useAuth } from '../auth';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
 import { DELIVERY_NOTE, PAYMENT_LABEL, formatDateTime, money } from '../lib/format';
 import { PHONE_DISPLAY } from '../lib/contact';
-import { getMyOrder, type PlacedOrder, type ReceiptResult } from '../services/orderService';
+import { getMyOrder, lastReceiptDetail, type PlacedOrder, type ReceiptResult } from '../services/orderService';
 import type { Navigate, Order } from '../types';
 
 type Props = { order: PlacedOrder | null; receipt: ReceiptResult | null; onNavigate: Navigate };
@@ -50,7 +50,7 @@ export function Confirmation({ order: placed, receipt, onNavigate }: Props) {
 
   const emailLine =
     receipt === 'sent' ? `A copy of this receipt has been emailed to ${order.customerEmail}.`
-    : receipt === 'skipped' || receipt === 'failed' ? `We could not email the receipt just now. You can print or save it from this page, and it stays available in My Orders.`
+    : receipt === 'skipped' || receipt === 'failed' ? `We could not email the receipt just now. You can print or save it from this page, and it stays available in My Orders.${lastReceiptDetail ? ` (Reason: ${lastReceiptDetail})` : ''}`
     : `Your receipt is available any time from My Orders.`;
   const receiptNo = `RCT-VM-${order.orderNumber.replace(/^VM-/, '')}`;
 

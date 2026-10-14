@@ -107,6 +107,9 @@ export async function cancelMyOrder(orderId: string): Promise<void> {
 
 export type ReceiptResult = 'sent' | 'skipped' | 'failed';
 
+/** Short technical reason for the last receipt email result (shown to help support). */
+export let lastReceiptDetail = '';
+
 /** Asks the server to email the payment receipt. Never throws: the result says whether the email went out. */
 export async function requestReceiptEmail(orderId: string, accessToken: string): Promise<ReceiptResult> {
   try {
@@ -115,10 +118,12 @@ export async function requestReceiptEmail(orderId: string, accessToken: string):
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
       body: JSON.stringify({ orderId }),
     });
-    const body = (await res.json().catch(() => ({}))) as { sent?: boolean; skipped?: string };
+    const body = (await res.json().catch(() => ({}))) as { sent?: boolean; skipped?: string; status?: number; detail?: string; error?: string };
+    lastReceiptDetail = body.sent ? '' : [res.status, body.error ?? body.skipped, body.status, body.detail].filter(Boolean).join(' | ');
     if (body.sent) return 'sent';
     return body.skipped ? 'skipped' : 'failed';
-  } catch {
+  } catch (e) {
+    lastReceiptDetail = `network: ${(e as Error).message}`;
     return 'failed';
   }
 }

@@ -17,6 +17,7 @@ import { Payment } from './pages/Payment';
 import { ProductDetails } from './pages/ProductDetails';
 import { Products } from './pages/Products';
 import { Services } from './pages/Services';
+import { ThankYou } from './pages/ThankYou';
 import { NotFound } from './pages/NotFound';
 import { SITE_NAME, SITE_URL, breadcrumbLd, useSeo, type Seo } from './lib/seo';
 import type { CartItem, Product } from './types';
@@ -39,7 +40,7 @@ if (window.location.hash.startsWith('#/')) {
 
 const currentRoute = () => window.location.pathname.replace(/\/+$/, '') || '/';
 
-const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/services', '/admin', '/payment', '/confirmation'];
+const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/services', '/admin', '/payment', '/confirmation', '/thank-you'];
 const isKnown = (r: string) => KNOWN.includes(r) || /^\/product\/[^/]+$/.test(r);
 
 const PRIVATE: Record<string, string> = {
@@ -50,6 +51,7 @@ const PRIVATE: Record<string, string> = {
   '/admin': 'Admin',
   '/payment': 'Pay by bank transfer',
   '/confirmation': 'Payment receipt',
+  '/thank-you': 'Thank you',
 };
 
 /** Title/description for pages whose content does not depend on loaded data. Product pages set their own. */
@@ -167,6 +169,7 @@ export function App() {
       {route === '/services' && <Services />}
       {route === '/payment' && <Payment order={lastOrder} onNavigate={navigate} onRequireLogin={() => requireLogin('/account')} onPaid={handlePaid} />}
       {route === '/confirmation' && <Confirmation order={lastOrder} receipt={receipt} onNavigate={navigate} />}
+      {route === '/thank-you' && <ThankYou order={lastOrder} receipt={receipt} onNavigate={navigate} />}
       {!isKnown(route) && <NotFound />}
 
       <Footer onNavigate={navigate} />

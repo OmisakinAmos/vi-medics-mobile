@@ -67,3 +67,40 @@
 .audit-details{background:var(--soft);border-radius:10px;padding:12px;font-size:12px;line-height:1.5;overflow:auto;max-height:260px;margin:0}
 .admin-date{height:45px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;color:var(--ink)}
 @media(max-width:720px){.report-kpis{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr}}
+
+/* ---- Accounting ---- */
+.acc-subtabs{display:flex;gap:8px;margin:0 0 14px;overflow-x:auto}
+.acc-subtab{background:#fff;border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:8px 16px;font-weight:700;white-space:nowrap}
+.acc-subtab-active{background:var(--blue);border-color:var(--blue);color:#fff}
+.acc-kpi-main{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
+.acc-neg{color:#b42318 !important}
+.acc-wide{grid-column:1/-1}
+.acc-legend{display:flex;gap:16px;align-items:center;font-size:13px;margin-bottom:10px;flex-wrap:wrap}
+.acc-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.acc-dot-rev{background:var(--blue)}
+.acc-dot-exp{background:#d9822b}
+.acc-chart-scroll{overflow-x:auto;padding-bottom:4px}
+.acc-chart{display:flex;align-items:flex-end;gap:4px;height:200px}
+.acc-col{flex:1;min-width:14px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:6px}
+.acc-bars{flex:1;display:flex;align-items:flex-end;gap:2px}
+.acc-bar{flex:1;min-height:2px;border-radius:3px 3px 0 0}
+.acc-bar-rev{background:var(--blue)}
+.acc-bar-exp{background:#d9822b}
+.acc-col-label{font-size:11px;color:var(--muted);height:14px;white-space:nowrap;text-align:center;overflow:visible}
+.acc-table-wrap{overflow-x:auto;margin-top:16px}
+.acc-table{width:100%;border-collapse:collapse;font-size:14px}
+.acc-table th{text-align:left;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
+.acc-table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.acc-table td:not(:first-child):not(:last-child),.acc-table th:not(:first-child):not(:last-child){text-align:right;white-space:nowrap}
+.acc-flag{color:#9a5a2c;font-size:12px;font-style:normal;font-weight:700}
+.acc-level{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.acc-level .acc-subtabs{margin:0}
+.acc-expense{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+.acc-expense span{display:block;color:var(--muted);font-size:13px}
+@media(max-width:720px){.acc-chart{height:160px}.acc-expense{grid-template-columns:1fr auto}.acc-expense button{grid-column:1/-1}}
+.report-grid>*{min-width:0}
+.acc-rows{display:grid;gap:0;margin:4px 0 10px}
+.acc-rows>div{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.acc-rows>div span{color:var(--muted)}
+.acc-rows .acc-rows-total{border-bottom:0;border-top:2px solid var(--blue);margin-top:4px;font-size:16px}
+.acc-rows .acc-rows-total span{color:var(--ink);font-weight:700}

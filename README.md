@@ -107,8 +107,11 @@ Admins manage products (including descriptions and photo upload), view customers
 
 
 ## Roadmap
-- **Accounting and expenses module** (planned): record expenses, profit and loss, and sales analysis by period, product and location.
+- **Accounting and expenses module** (built; needs `008-accounting.sql`): admin Accounting tab with sales, cost of goods, profit, expenses, and analysis by period, product and location.
 - **Google Business Profile** (planned): local search visibility. Phone and contact details will be reviewed first.
 
 ## Security
 See `SECURITY.md`. Run `supabase/migrations/007-security-and-delivery.sql` after 006. Delivery fee is no longer added to totals; delivery is arranged outside the app. Navigation (Home, Shop, Servicing, Cart, Account) is a top bar after the logo.
+
+## Accounting
+Admin -> Accounting. Run `supabase/migrations/008-accounting.sql` after 007. Sales count when a payment is confirmed (cancelled orders never count). Cost prices are stored in the admin-only `product_costs` table (never on the public products table) and snapshotted per sold item in `order_item_costs`. Profit = sales - cost of goods - marketing/other costs; stock purchases are shown separately so they are not counted twice. Pure maths lives in `src/lib/accounting.ts`.

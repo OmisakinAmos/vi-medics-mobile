@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { adminListProductCosts } from './accountingService';
 import type { Category, OrderStatus, PaymentStatus, Product, ProductStatus } from '../types';
 
 /** Admin-only data access. Every call is also enforced by Row Level Security in the database. */
@@ -29,7 +30,8 @@ export async function checkIsAdmin(): Promise<boolean> {
 }
 
 // ------------------------------------------------------------------ products
-export type AdminProduct = Product & { status: ProductStatus };
+/** costPrice is what the item costs to buy. It lives in an admin-only table (migration 008), never on the public product. */
+export type AdminProduct = Product & { status: ProductStatus; costPrice?: number };
 
 type ProductRow = {
   id: string; name: string; category: Category; description: string; short_description: string | null;
@@ -47,7 +49,9 @@ const toProduct = (r: ProductRow): AdminProduct => ({
 export async function adminListProducts(): Promise<AdminProduct[]> {
   const { data, error } = await db().from('products').select('*').order('created_at', { ascending: true });
   if (error) throw new Error(error.message);
-  return (data as ProductRow[]).map(toProduct);
+  // Cost prices are optional: if migration 008 has not been run yet, the products still load.
+  const costs = await adminListProductCosts().catch(() => ({} as Record<string, number>));
+  return (data as ProductRow[]).map((r) => ({ ...toProduct(r), costPrice: costs[r.id] }));
 }
 
 /** Next free product id such as vm-015. */

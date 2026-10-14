@@ -28,6 +28,8 @@ A local Postgres copy of the real schema (schema.sql, 003, 006, 007) was attacke
 - Receipt emails escape customer text (HTML in a name is shown as text, not run).
 - Secrets live in environment variables only. The Supabase anon key is public by design; the RLS rules protect the data.
 
+- Accounting data (`product_costs`, `order_item_costs`, `expenses`) is admin-only. Tested: visitors and customers get no rows and cannot write; bad amounts and categories are rejected; every change is audited. Cost prices are kept off the public products table on purpose.
+
 ## Not testable from our side (do these in the dashboards)
 - Supabase -> Authentication: keep Google as the only provider; turn off "Allow new users to sign up" for any unused provider; set Site URL and Redirect URLs to the production site only.
 - Supabase -> Authentication: enable leaked-password protection if email login is ever added. Turn on MFA for the owner account and the admin Google account.

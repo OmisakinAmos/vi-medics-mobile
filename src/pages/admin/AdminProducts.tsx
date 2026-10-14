@@ -7,6 +7,7 @@ import {
   type AdminProduct,
 } from '../../services/adminService';
 import type { Category, ProductStatus } from '../../types';
+import { adminSaveProductCost } from '../../services/accountingService';
 
 export function AdminProducts() {
   const [products, setProducts] = useState<AdminProduct[]>([]);
@@ -76,6 +77,7 @@ function ProductForm({ initial, isNew, onCancel, onSaved }: { initial: AdminProd
   const [p, setP] = useState<AdminProduct>(initial);
   const [price, setPrice] = useState(String(initial.price));
   const [stock, setStock] = useState(String(initial.stockQuantity));
+  const [cost, setCost] = useState(initial.costPrice ? String(initial.costPrice) : '');
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -97,9 +99,12 @@ function ProductForm({ initial, isNew, onCancel, onSaved }: { initial: AdminProd
     if (!p.name.trim()) return setError('Enter a product name.');
     if (!Number.isFinite(priceNum) || priceNum < 0) return setError('Enter a valid price.');
     if (!Number.isInteger(stockNum) || stockNum < 0) return setError('Stock must be a whole number, 0 or more.');
+    const costNum = cost.trim() === '' ? null : Number(cost);
+    if (costNum !== null && (!Number.isFinite(costNum) || costNum < 0)) return setError('Enter a valid cost price, or leave it empty.');
     setSaving(true); setError(null);
     try {
       await adminSaveProduct({ ...p, price: priceNum, stockQuantity: stockNum });
+      if (costNum !== null && costNum !== (initial.costPrice ?? 0)) await adminSaveProductCost(p.id, costNum);
       onSaved(p.name.trim());
     } catch (err) {
       setError((err as Error).message);
@@ -124,6 +129,7 @@ function ProductForm({ initial, isNew, onCancel, onSaved }: { initial: AdminProd
           </label>
           <label>Price (₦)<input required inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} /></label>
           <label>Stock quantity<input required inputMode="numeric" value={stock} onChange={(e) => setStock(e.target.value)} /></label>
+          <label className="full">Cost price (₦, optional)<input inputMode="decimal" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="What one item costs you to buy" /><small className="admin-hint">Private. Only admins see this. Used for profit in the Accounting tab.</small></label>
           <label>Brand<input value={p.brand} onChange={text('brand')} /></label>
           <label>Model<input value={p.model} onChange={text('model')} /></label>
           <label className="full">Warranty<input value={p.warranty} onChange={text('warranty')} placeholder="e.g. 12 months, or Single use" /></label>

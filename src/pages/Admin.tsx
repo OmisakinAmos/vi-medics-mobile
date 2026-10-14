@@ -3,6 +3,7 @@ import { useAuth } from '../auth';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
 import { checkIsAdmin } from '../services/adminService';
 import type { Navigate } from '../types';
+import { AdminAccounting } from './admin/AdminAccounting';
 import { AdminAudit } from './admin/AdminAudit';
 import { AdminCustomers } from './admin/AdminCustomers';
 import { AdminOrders } from './admin/AdminOrders';
@@ -10,12 +11,13 @@ import { AdminProducts } from './admin/AdminProducts';
 import { AdminReports } from './admin/AdminReports';
 import { AdminSettings } from './admin/AdminSettings';
 
-type Tab = 'products' | 'orders' | 'customers' | 'reports' | 'audit' | 'settings';
+type Tab = 'products' | 'orders' | 'customers' | 'reports' | 'accounting' | 'audit' | 'settings';
 const TABS: { id: Tab; label: string }[] = [
   { id: 'products', label: 'Products' },
   { id: 'orders', label: 'Orders' },
   { id: 'customers', label: 'Customers' },
   { id: 'reports', label: 'Reports' },
+  { id: 'accounting', label: 'Accounting' },
   { id: 'audit', label: 'Audit trail' },
   { id: 'settings', label: 'Payment settings' },
 ];
@@ -58,7 +60,7 @@ export function Admin({ onNavigate, onRequireLogin }: { onNavigate: Navigate; on
 
   return (
     <main className="page"><div className="container">
-      <div className="page-heading"><div><span className="eyebrow">ADMIN</span><h1>Store admin</h1><p>Manage products, orders, payments and deliveries, and see reports and the audit trail.</p></div></div>
+      <div className="page-heading"><div><span className="eyebrow">ADMIN</span><h1>Store admin</h1><p>Manage products, orders, payments and deliveries. See reports, accounting (sales, expenses and profit) and the audit trail.</p></div></div>
       <div className="admin-tabs" role="tablist">
         {TABS.map((t) => <button key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? 'admin-tab admin-tab-active' : 'admin-tab'} onClick={() => setTab(t.id)}>{t.label}</button>)}
       </div>
@@ -66,6 +68,7 @@ export function Admin({ onNavigate, onRequireLogin }: { onNavigate: Navigate; on
       {tab === 'orders' && <AdminOrders />}
       {tab === 'customers' && <AdminCustomers />}
       {tab === 'reports' && <AdminReports />}
+      {tab === 'accounting' && <AdminAccounting />}
       {tab === 'audit' && <AdminAudit />}
       {tab === 'settings' && <AdminSettings />}
     </div></main>

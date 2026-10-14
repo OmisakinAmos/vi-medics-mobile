@@ -47,3 +47,9 @@
 - Receipt email logo is bundled in `api/_logo.ts` and sent as an inline attachment. Needs a retest after deploy.
 - Security pass: migration 007, headers in `vercel.json`, receipt rate limit, Cancel order button, `SECURITY.md`.
 - Next: accounting/expenses/analytics module; Google Business Profile; re-render video and deck.
+
+## Accounting module (2026-10-14)
+- Migration 008 adds `product_costs`, `order_item_costs` (admin-only) and `expenses` (admin-only, audited). `place_order` now snapshots cost at sale time.
+- Admin -> Accounting: Overview (KPIs, trend, cash view), Products, Locations (state/city), Expenses (add/delete, CSV). Cost price field is on the product form.
+- Owner rules: revenue = payment confirmed; categories = stock, marketing, other.
+- Next: edit expenses, supplier list, invoices/receipts upload, Google Business Profile.

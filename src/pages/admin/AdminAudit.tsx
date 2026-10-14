@@ -5,7 +5,7 @@ import { formatDateTime } from '../../lib/format';
 import { adminListAudit, type AuditEntry } from '../../services/adminService';
 
 const PAGE = 300;
-const ENTITIES = ['order', 'product', 'user', 'settings'];
+const ENTITIES = ['order', 'product', 'expense', 'user', 'settings'];
 
 export function AdminAudit() {
   const [entries, setEntries] = useState<AuditEntry[]>([]);

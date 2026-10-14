@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Bars } from '../../components/Bars';
 import { ErrorMessage, Loading } from '../../components/StatusMessage';
 import { downloadCsv } from '../../lib/csv';
 import { PAYMENT_LABEL, formatDateTime, money } from '../../lib/format';
@@ -20,21 +21,6 @@ function rangeStart(range: Range): number {
   if (range === 'today') return new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   if (range === 'month') return new Date(now.getFullYear(), now.getMonth(), 1).getTime();
   return now.getTime() - Number(range) * 86400000;
-}
-
-function Bars({ rows, format = (n: number) => String(n) }: { rows: { label: string; value: number }[]; format?: (n: number) => string }) {
-  const max = Math.max(1, ...rows.map((r) => r.value));
-  return (
-    <div className="report-bars">
-      {rows.map((r) => (
-        <div key={r.label} className="report-bar-row">
-          <span className="report-bar-label">{r.label}</span>
-          <span className="report-bar-track"><span className="report-bar-fill" style={{ width: `${(r.value / max) * 100}%` }} /></span>
-          <strong>{format(r.value)}</strong>
-        </div>
-      ))}
-    </div>
-  );
 }
 
 export function AdminReports() {

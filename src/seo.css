@@ -55,3 +55,9 @@ a.category-card{color:inherit}
 .info-icon{color:var(--copper-deep);background:#f8ece3}
 .service-cta .outline-button:hover,.outline-button:hover{border-color:var(--copper)}
 @media(max-width:720px){.main-nav a.nav-active{box-shadow:none;border-left:3px solid var(--copper)}}
+
+/* Hero: real product photo in the featured card */
+.hero-photo{display:grid;place-items:center;height:220px;border-radius:24px;border:1px solid #dce9eb;background:#fff;overflow:hidden}
+.hero-photo img{width:100%;height:100%;object-fit:contain;padding:12px;display:block}
+.hero-photo-loading{background:linear-gradient(145deg,#eef5f6,#fff)}
+@media(max-width:430px){.hero-photo{height:170px}}

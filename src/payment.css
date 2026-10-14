@@ -42,7 +42,7 @@
 .receipt-table .receipt-total td{font-weight:800;font-size:17px;border-top:2px solid var(--blue);padding-top:12px;color:var(--ink)}
 .receipt-deliver{display:grid;gap:2px;margin-top:18px;font-size:14px;line-height:1.5}
 .receipt-foot{margin:18px 0 0;color:var(--muted);font-size:13px;text-align:center}
-@media(max-width:560px){.receipt{padding:18px}.receipt-company{text-align:left}.receipt-table th:nth-child(2),.receipt-table td:nth-child(2){display:none}.receipt-table tfoot td[colspan="3"]{}.receipt-meta dt{width:100px}}
+@media(max-width:560px){.receipt{padding:18px}.receipt-company{text-align:left}.receipt-table thead th:nth-child(2),.receipt-table tbody td:nth-child(2){display:none}.receipt-table tfoot td[colspan="3"]{padding-right:0}.receipt-meta dt{width:100px}}
 
 @media print{
   .site-header,.footer,.bottom-nav,.no-print{display:none!important}
@@ -50,3 +50,4 @@
   .page{padding:0!important}
   .receipt{border:0;box-shadow:none;padding:0}
 }
+.order-card .pay-badge{display:inline-block;width:fit-content;max-width:100%;margin-top:6px;font-size:11px}

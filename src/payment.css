@@ -45,7 +45,7 @@
 @media(max-width:560px){.receipt{padding:18px}.receipt-company{text-align:left}.receipt-table thead th:nth-child(2),.receipt-table tbody td:nth-child(2){display:none}.receipt-table tfoot td[colspan="3"]{padding-right:0}.receipt-meta dt{width:100px}}
 
 @media print{
-  .site-header,.footer,.bottom-nav,.no-print{display:none!important}
+  .site-header,.footer,.no-print{display:none!important}
   body,.site-shell,.page{background:#fff!important}
   .page{padding:0!important}
   .receipt{border:0;box-shadow:none;padding:0}

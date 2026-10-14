@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
-import { PAYMENT_LABEL, formatDateTime, money } from '../lib/format';
+import { DELIVERY_NOTE, PAYMENT_LABEL, formatDateTime, money } from '../lib/format';
 import { PHONE_DISPLAY } from '../lib/contact';
 import { getMyOrder, type PlacedOrder, type ReceiptResult } from '../services/orderService';
 import type { Navigate, Order } from '../types';
@@ -80,7 +80,7 @@ export function Confirmation({ order: placed, receipt, onNavigate }: Props) {
           <tbody>{order.items.map((i) => <tr key={i.id}><td>{i.productName}</td><td>{money(i.unitPrice)}</td><td>{i.quantity}</td><td>{money(i.unitPrice * i.quantity)}</td></tr>)}</tbody>
           <tfoot>
             <tr><td colSpan={3}>Subtotal</td><td>{money(order.subtotal)}</td></tr>
-            <tr><td colSpan={3}>Delivery</td><td>{money(order.deliveryFee)}</td></tr>
+            <tr><td colSpan={3}>Delivery</td><td>{order.deliveryFee > 0 ? money(order.deliveryFee) : DELIVERY_NOTE}</td></tr>
             <tr className="receipt-total"><td colSpan={3}>Total</td><td>{money(order.total)}</td></tr>
           </tfoot>
         </table>

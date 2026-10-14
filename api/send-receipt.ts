@@ -2,6 +2,8 @@
 // The caller must send their Supabase access token; the order is read with that token,
 // so row level security guarantees users can only trigger receipts for their own orders.
 
+import { LOGO_PNG_BASE64 } from './_logo';
+
 type OrderItem = { product_name: string; unit_price: number; quantity: number };
 type Order = {
   order_number: number; created_at: string; paid_reported_at: string | null; payment_status: 'awaiting' | 'reported' | 'confirmed';
@@ -16,6 +18,8 @@ const cors = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Cache-Control': 'no-store',
+  'X-Content-Type-Options': 'nosniff',
 };
 
 const json = (body: unknown, status = 200) =>
@@ -47,6 +51,7 @@ export async function POST(request: Request): Promise<Response> {
   const token = (request.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '');
   if (!token) return json({ error: 'Unauthorized' }, 401);
 
+  if (Number(request.headers.get('content-length') ?? 0) > 2048) return json({ error: 'Request too large' }, 413);
   const { orderId } = (await request.json().catch(() => ({}))) as { orderId?: string };
   if (!orderId || !/^[0-9a-f-]{36}$/i.test(orderId)) return json({ error: 'Invalid order id' }, 400);
 
@@ -59,10 +64,21 @@ export async function POST(request: Request): Promise<Response> {
   if (!order) return json({ error: 'Order not found' }, 404);
   if (order.payment_status === 'awaiting') return json({ error: 'Payment has not been reported for this order' }, 409);
 
+  // Rate limit: the database allows one receipt per order every 2 minutes (stops email bombing and Mailgun quota abuse).
+  const claim = await fetch(`${supabaseUrl}/rest/v1/rpc/claim_receipt_send`, {
+    method: 'POST',
+    headers: { apikey: anonKey, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_order_id: orderId }),
+  });
+  // 404 = migration 007 not applied yet; keep receipts working until it is.
+  if (claim.status !== 404 && (!claim.ok || (await claim.json().catch(() => false)) !== true)) {
+    return json({ skipped: 'A receipt for this order was sent recently' });
+  }
+
   // The logo travels inside the email (inline attachment), because mail apps hide pictures loaded from the web
-  // for new senders. If it cannot be fetched, fall back to the hosted logo.
-  const logo = await fetch(`${siteUrl}/logo.png`).then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
-  const logoSrc = logo ? 'cid:logo.png' : `${siteUrl}/logo.png`;
+  // for new senders. It is bundled with this function, so there is no network fetch that could fail.
+  const logo = Uint8Array.from(atob(LOGO_PNG_BASE64), (c) => c.charCodeAt(0));
+  const logoSrc = 'cid:logo.png';
 
   const ref = `VM-${order.order_number}`;
   const receiptNo = `RCT-${ref}`;
@@ -89,7 +105,7 @@ export async function POST(request: Request): Promise<Response> {
     ...order.order_items.map((i) => `${i.product_name} | ${naira(i.unit_price)} x ${i.quantity} = ${naira(i.unit_price * i.quantity)}`),
     '',
     `Subtotal: ${naira(order.subtotal)}`,
-    `Delivery: ${naira(order.delivery_fee)}`,
+    `Delivery: ${order.delivery_fee > 0 ? naira(order.delivery_fee) : 'Arranged separately'}`,
     `TOTAL: ${naira(order.total)}`,
     '',
     'Thank you for shopping with Vi-Medics.',
@@ -127,7 +143,7 @@ ${meta('Status', esc(statusLine))}
 <tr><td style="padding:0 0 6px;font-size:12px;color:#7b8794;text-transform:uppercase;letter-spacing:1px">Items purchased</td><td></td></tr>
 ${rows}
 <tr><td style="padding:10px 0 4px;color:#52606d;font-size:14px">Subtotal</td><td style="padding:10px 0 4px;text-align:right;font-size:14px">${naira(order.subtotal)}</td></tr>
-<tr><td style="padding:4px 0;color:#52606d;font-size:14px">Delivery</td><td style="padding:4px 0;text-align:right;font-size:14px">${naira(order.delivery_fee)}</td></tr>
+<tr><td style="padding:4px 0;color:#52606d;font-size:14px">Delivery</td><td style="padding:4px 0;text-align:right;font-size:14px">${order.delivery_fee > 0 ? naira(order.delivery_fee) : 'Arranged separately'}</td></tr>
 <tr><td style="padding:12px 0;font-weight:bold;font-size:17px;border-top:2px solid #0f4c5c">Total</td><td style="padding:12px 0;text-align:right;font-weight:bold;font-size:17px;border-top:2px solid #0f4c5c">${naira(order.total)}</td></tr>
 </table>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px">
@@ -146,7 +162,7 @@ ${rows}
   form.set('text', text);
   form.set('html', html);
   if (notifyEmail) form.set('bcc', notifyEmail);
-  if (logo) form.set('inline', new Blob([logo], { type: 'image/png' }), 'logo.png');
+  form.set('inline', new Blob([logo], { type: 'image/png' }), 'logo.png');
   const mg = await fetch(`${mailgunBase}/v3/${mailgunDomain}/messages`, {
     method: 'POST',
     headers: { Authorization: `Basic ${btoa(`api:${mailgunKey}`)}` },

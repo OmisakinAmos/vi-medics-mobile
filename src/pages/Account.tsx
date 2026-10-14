@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
-import { PAYMENT_LABEL, formatDateTime, money } from '../lib/format';
+import { DELIVERY_NOTE, PAYMENT_LABEL, formatDateTime, money } from '../lib/format';
 import { checkIsAdmin } from '../services/adminService';
-import { listMyOrders } from '../services/orderService';
+import { cancelMyOrder, listMyOrders } from '../services/orderService';
 import type { PlacedOrder } from '../services/orderService';
 import type { Navigate, Order } from '../types';
 
@@ -16,6 +16,21 @@ export function Account({ onNavigate, onPay, onViewReceipt }: { onNavigate: Navi
   const [error, setError] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [cancelling, setCancelling] = useState<string | null>(null);
+
+  const handleCancel = async (id: string) => {
+    if (!window.confirm('Cancel this order? Your reserved items will be released.')) return;
+    setCancelling(id);
+    try {
+      await cancelMyOrder(id);
+      setOrders((list) => list.map((o) => (o.id === id ? { ...o, status: 'cancelled' } : o)));
+      setError(null);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setCancelling(null);
+    }
+  };
 
   useEffect(() => {
     if (!user) { setIsAdmin(false); return; }
@@ -76,11 +91,12 @@ export function Account({ onNavigate, onPay, onViewReceipt }: { onNavigate: Navi
               {openId === order.id && (
                 <div className="summary" style={{ marginTop: 8 }}>
                   {order.items.map((i) => <div key={i.id}><span>{i.productName} × {i.quantity}</span><strong>{money(i.unitPrice * i.quantity)}</strong></div>)}
-                  <div><span>Delivery</span><strong>{money(order.deliveryFee)}</strong></div>
+                  <div><span>Delivery</span><strong>{order.deliveryFee > 0 ? money(order.deliveryFee) : DELIVERY_NOTE}</strong></div>
                   <div className="summary-total"><span>Total</span><strong>{money(order.total)}</strong></div>
                   {order.deliveredAt && <div><span>Delivered</span><strong>{formatDateTime(order.deliveredAt)}</strong></div>}
                   <div className="order-actions">
                     {order.paymentStatus === 'awaiting' && order.status !== 'cancelled' && <button className="primary-button" onClick={() => { onPay({ id: order.id, orderNumber: order.orderNumber, total: order.total }); onNavigate('/payment'); }}>Pay by bank transfer →</button>}
+                    {order.paymentStatus === 'awaiting' && order.status !== 'cancelled' && <button className="outline-button" disabled={cancelling === order.id} onClick={() => handleCancel(order.id)}>{cancelling === order.id ? 'Cancelling…' : 'Cancel order'}</button>}
                     {order.paymentStatus !== 'awaiting' && <button className="outline-button" onClick={() => { onViewReceipt({ id: order.id, orderNumber: order.orderNumber, total: order.total }); onNavigate('/confirmation'); }}>View receipt</button>}
                   </div>
                 </div>

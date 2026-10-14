@@ -82,7 +82,7 @@ export function AdminOrders() {
                 <p><strong>Deliver to:</strong> {o.address}, {o.city}, {o.state}</p>
                 <div className="summary">
                   {o.items.map((i) => <div key={i.id}><span>{i.productName} × {i.quantity}</span><strong>{money(i.unitPrice * i.quantity)}</strong></div>)}
-                  <div className="summary-total"><span>Total (incl. delivery)</span><strong>{money(o.total)}</strong></div>
+                  <div className="summary-total"><span>Total (delivery arranged separately)</span><strong>{money(o.total)}</strong></div>
                 </div>
               </div>
             )}

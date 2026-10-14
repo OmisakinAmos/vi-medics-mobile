@@ -11,6 +11,9 @@ on:
       - 'README.md'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: vercel-production
   cancel-in-progress: true

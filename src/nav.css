@@ -1,0 +1,22 @@
+/* Top navigation bar (replaces the old bottom tab bar and the hamburger menu) */
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.header-inner{gap:8px}
+.top-nav{display:flex;align-items:stretch;gap:2px;margin-left:16px;flex:1;min-width:0}
+.top-nav a.link{display:inline-flex;align-items:center;gap:8px;padding:0 14px;height:76px;background:transparent;color:#52606d;font-size:14px;font-weight:600;white-space:nowrap}
+.top-nav a.link:hover{color:var(--blue);background:var(--soft)}
+.top-nav a.link.nav-active{color:var(--blue);font-weight:800;box-shadow:inset 0 -3px 0 var(--copper)}
+.top-nav .nav-icon{position:relative;font-size:17px;line-height:1}
+.top-nav .nav-icon b{position:absolute;top:-8px;right:-12px;background:var(--copper-deep);color:#fff;border-radius:99px;min-width:16px;height:16px;font-size:10px;display:grid;place-items:center;padding:0 4px}
+.top-nav .nav-cart{margin-left:auto}
+@media(max-width:720px){
+  .site-header{padding-top:env(safe-area-inset-top)}
+  .header-inner{height:auto;flex-wrap:wrap;gap:0}
+  .brand{padding:8px 0 6px}
+  .brand-logo{height:34px;width:auto}
+  .top-nav{flex-basis:100%;width:calc(100% + 28px);margin:0 -14px;display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-top:1px solid var(--line)}
+  .top-nav a.link{flex-direction:column;justify-content:center;gap:2px;height:54px;padding:0;font-size:10px;text-align:center}
+  .top-nav a.nav-about{display:none}
+  .top-nav .nav-cart{margin-left:0}
+  .top-nav .nav-icon{font-size:19px}
+  .top-nav a.link.nav-active{box-shadow:inset 0 3px 0 var(--copper)}
+}

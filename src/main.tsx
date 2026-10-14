@@ -8,6 +8,7 @@ import './mobile.css';
 import './seo.css';
 import './admin.css';
 import './payment.css';
+import './nav.css';
 
 initNative();
 

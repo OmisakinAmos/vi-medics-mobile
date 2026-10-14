@@ -1,12 +1,11 @@
 import { ProductVisual } from '../components/ProductVisual';
-import { DELIVERY_FEE, money } from '../lib/format';
+import { DELIVERY_NOTE, money } from '../lib/format';
 import type { CartItem, Navigate } from '../types';
 
 type Props = { cart: CartItem[]; onNavigate: Navigate; onUpdate: (id: string, q: number) => void; onRemove: (id: string) => void };
 
 export function Cart({ cart, onNavigate, onUpdate, onRemove }: Props) {
   const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const delivery = cart.length ? DELIVERY_FEE : 0;
   return (
     <main className="page"><div className="container narrow">
       <span className="eyebrow">YOUR CART</span><h1>Shopping cart</h1><p className="page-intro">Review your selected equipment before checkout.</p>
@@ -32,9 +31,9 @@ export function Cart({ cart, onNavigate, onUpdate, onRemove }: Props) {
           <aside className="summary">
             <h2>Order summary</h2>
             <div><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
-            <div><span>Delivery</span><strong>{money(delivery)}</strong></div>
+            <div><span>Delivery</span><strong>{DELIVERY_NOTE}</strong></div>
             <hr />
-            <div className="summary-total"><span>Total</span><strong>{money(subtotal + delivery)}</strong></div>
+            <div className="summary-total"><span>Total</span><strong>{money(subtotal)}</strong></div>
             <button className="primary-button wide" onClick={() => onNavigate('/checkout')}>Proceed to checkout →</button>
             <button className="text-button wide" onClick={() => onNavigate('/products')}>Continue shopping</button>
           </aside>

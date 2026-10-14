@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
-import { money } from '../lib/format';
+import { DELIVERY_NOTE, money } from '../lib/format';
 import { getMyOrder, getPaymentDetails, reportPayment, requestReceiptEmail, type PaymentDetails, type PlacedOrder, type ReceiptResult } from '../services/orderService';
 import type { Navigate, Order } from '../types';
 
@@ -90,7 +90,7 @@ export function Payment({ order: placed, onNavigate, onRequireLogin, onPaid }: P
           <div className="form-card pay-total">
             <span>Amount to transfer</span>
             <strong>{money(order.total)}</strong>
-            <small>Order #{order.orderNumber} · includes {money(order.deliveryFee)} delivery</small>
+            <small>Order #{order.orderNumber}{order.deliveryFee > 0 ? ` · includes ${money(order.deliveryFee)} delivery` : ' · delivery is arranged separately'}</small>
           </div>
 
           {cancelled && <div className="admin-error">This order was cancelled, so it can no longer be paid for.</div>}
@@ -132,7 +132,7 @@ export function Payment({ order: placed, onNavigate, onRequireLogin, onPaid }: P
           {order.items.map((i) => <div key={i.id}><span>{i.productName} × {i.quantity}</span><strong>{money(i.unitPrice * i.quantity)}</strong></div>)}
           <hr />
           <div><span>Subtotal</span><strong>{money(order.subtotal)}</strong></div>
-          <div><span>Delivery</span><strong>{money(order.deliveryFee)}</strong></div>
+          <div><span>Delivery</span><strong>{order.deliveryFee > 0 ? money(order.deliveryFee) : DELIVERY_NOTE}</strong></div>
           <div className="summary-total"><span>Total</span><strong>{money(order.total)}</strong></div>
           <hr />
           <div><span>Deliver to</span><strong style={{ textAlign: 'right' }}>{order.address}, {order.city}, {order.state}</strong></div>

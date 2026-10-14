@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from './auth';
 import type { PlacedOrder, ReceiptResult } from './services/orderService';
 import { Footer } from './components/Footer';
-import { BottomNav } from './components/BottomNav';
 import { Header } from './components/Header';
 import { go } from './lib/format';
 import { About } from './pages/About';
@@ -110,7 +109,6 @@ function pageSeo(route: string): Seo | null {
 export function App() {
   const [route, setRoute] = useState(currentRoute());
   const [cart, setCart] = useState<CartItem[]>(loadCart);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [lastOrder, setLastOrder] = useState<PlacedOrder | null>(null);
   const [receipt, setReceipt] = useState<ReceiptResult | null>(null);
   const postLogin = useRef('/account');
@@ -122,7 +120,6 @@ export function App() {
     return () => window.removeEventListener('popstate', onNav);
   }, []);
 
-  useEffect(() => setMobileOpen(false), [route]);
   useSeo(pageSeo(route));
 
   useEffect(() => {
@@ -146,7 +143,7 @@ export function App() {
 
   const removeFromCart = (id: string) => setCart((current) => current.filter((item) => item.product.id !== id));
 
-  const navigate = (path: string) => { go(path); setMobileOpen(false); };
+  const navigate = (path: string) => { go(path); };
 
   const requireLogin = (returnTo: string) => { postLogin.current = returnTo; navigate('/login'); };
   const handlePlaced = (order: PlacedOrder) => { setLastOrder(order); setReceipt(null); setCart([]); };
@@ -155,7 +152,7 @@ export function App() {
 
   return (
     <div className="site-shell">
-      <Header route={route} signedIn={Boolean(user)} cartCount={cartCount} mobileOpen={mobileOpen} onToggleMenu={() => setMobileOpen((v) => !v)} onNavigate={navigate} />
+      <Header route={route} signedIn={Boolean(user)} cartCount={cartCount} />
 
       {route === '/' && <Home onNavigate={navigate} onAdd={addToCart} />}
       {route === '/products' && <Products onNavigate={navigate} onAdd={addToCart} />}
@@ -173,7 +170,6 @@ export function App() {
       {!isKnown(route) && <NotFound />}
 
       <Footer onNavigate={navigate} />
-      <BottomNav route={route} cartCount={cartCount} signedIn={Boolean(user)} onNavigate={navigate} />
     </div>
   );
 }

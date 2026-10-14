@@ -39,3 +39,11 @@
   Flow: Checkout "Pay by bank transfer" -> place_order (status pending, payment awaiting, stock reserved) -> /payment shows bank details from store_settings -> "I have paid" calls report_payment() and api/send-receipt.ts emails a branded receipt -> /confirmation shows the receipt (print/PDF).
   Admin (Orders tab): Confirm payment (payment_status confirmed, pending -> confirmed), Mark delivered (sets delivered_at), cancel returns stock and cannot be reopened. Reports tab (period KPIs, status/payment bars, best sellers, stock to watch, CSV). Audit trail tab reads audit_log (written by DB triggers + log_event for sign-in/out; admin read-only, no edit/delete). Payment settings tab edits bank details (changes are audited).
   Mailgun sandbox only delivers to authorised recipients: receipts to other customers need a verified sending domain. Unpaid orders keep stock reserved until the admin cancels them (cancelling returns the stock).
+
+
+## Latest changes (2026-10-14)
+- Delivery fee removed from totals (migration 007 sets it to 0; receipts say "Arranged separately").
+- Top navigation bar replaces the bottom nav and footer links.
+- Receipt email logo is bundled in `api/_logo.ts` and sent as an inline attachment. Needs a retest after deploy.
+- Security pass: migration 007, headers in `vercel.json`, receipt rate limit, Cancel order button, `SECURITY.md`.
+- Next: accounting/expenses/analytics module; Google Business Profile; re-render video and deck.

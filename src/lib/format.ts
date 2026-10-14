@@ -1,4 +1,5 @@
-export const DELIVERY_FEE = 5000;
+/** Delivery is arranged and priced outside the app (distance and road conditions vary), so it is never added to totals. */
+export const DELIVERY_NOTE = 'Arranged separately';
 
 export const money = (value: number) =>
   new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(value);

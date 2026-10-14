@@ -10,7 +10,7 @@ export function ThankYou({ order, receipt, onNavigate }: { order: PlacedOrder | 
       <h1>Thank you for your order.</h1>
       <p>
         {order ? <>Your order <strong>#{order.orderNumber}</strong> has been received. </> : 'Your order has been received. '}
-        We will confirm your payment and arrange delivery. You can follow its progress any time under My Orders.
+        We will confirm your payment and contact you to arrange delivery. You can follow its progress any time under My Orders.
         {receipt === 'sent' && ' Your receipt has also been emailed to you.'}
       </p>
       <div className="hero-actions">

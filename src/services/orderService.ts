@@ -98,6 +98,13 @@ export async function reportPayment(orderId: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+/** Cancels the customer's own unpaid order; the reserved stock goes back on the shelf. */
+export async function cancelMyOrder(orderId: string): Promise<void> {
+  if (!supabase) throw new Error('The database is not configured.');
+  const { error } = await supabase.rpc('cancel_my_order', { p_order_id: orderId });
+  if (error) throw new Error(error.message);
+}
+
 export type ReceiptResult = 'sent' | 'skipped' | 'failed';
 
 /** Asks the server to email the payment receipt. Never throws: the result says whether the email went out. */

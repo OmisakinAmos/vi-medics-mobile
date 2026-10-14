@@ -104,3 +104,11 @@ Admins manage products (including descriptions and photo upload), view customers
 - **Reports** (Admin -> Reports): orders, money received, awaiting payment, delivered, average order, new customers, best sellers, stock to watch, CSV download.
 - **Audit trail** (Admin -> Audit trail): who did what and when (orders, payments, deliveries, product and payment-setting changes, new accounts, sign-ins). Written by database triggers; admins can read it but nobody can edit or delete entries from the app.
 - Setup: run `supabase/migrations/006-payments-reports-audit.sql` once. Optional env var `ORDER_NOTIFY_EMAIL` sends a BCC of every receipt to the store.
+
+
+## Roadmap
+- **Accounting and expenses module** (planned): record expenses, profit and loss, and sales analysis by period, product and location.
+- **Google Business Profile** (planned): local search visibility. Phone and contact details will be reviewed first.
+
+## Security
+See `SECURITY.md`. Run `supabase/migrations/007-security-and-delivery.sql` after 006. Delivery fee is no longer added to totals; delivery is arranged outside the app. Navigation (Home, Shop, Servicing, Cart, Account) is a top bar after the logo.

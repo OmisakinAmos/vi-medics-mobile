@@ -17,7 +17,7 @@ jobs:
       VITE_SUPABASE_ANON_KEY: sb_publishable_O7Iyge-eRcbTCjygWsHxNg_WeKHMziD
       VITE_API_BASE_URL: https://vi-medics.vercel.app
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:

@@ -59,6 +59,11 @@ export async function POST(request: Request): Promise<Response> {
   if (!order) return json({ error: 'Order not found' }, 404);
   if (order.payment_status === 'awaiting') return json({ error: 'Payment has not been reported for this order' }, 409);
 
+  // The logo travels inside the email (inline attachment), because mail apps hide pictures loaded from the web
+  // for new senders. If it cannot be fetched, fall back to the hosted logo.
+  const logo = await fetch(`${siteUrl}/logo.png`).then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
+  const logoSrc = logo ? 'cid:logo.png' : `${siteUrl}/logo.png`;
+
   const ref = `VM-${order.order_number}`;
   const receiptNo = `RCT-${ref}`;
   const paidAt = when(order.paid_reported_at ?? order.created_at);
@@ -105,7 +110,7 @@ export async function POST(request: Request): Promise<Response> {
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden">
 <tr><td style="padding:22px 24px;border-bottom:4px solid #b86e3c">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-<td><img src="${siteUrl}/logo.png" alt="Vi-Medics" height="44" style="display:block;height:44px;width:auto;border:0"></td>
+<td><img src="${logoSrc}" alt="Vi-Medics" height="44" style="display:block;height:44px;width:auto;border:0"></td>
 <td align="right" style="font-size:12px;color:#52606d;line-height:1.6"><strong style="color:#0f4c5c;font-size:14px">Vi-Medics</strong><br>Medical Equipment, Supplies &amp; Servicing<br>${PHONE}<br>${esc(siteUrl.replace(/^https?:\/\//, ''))}</td>
 </tr></table></td></tr>
 <tr><td style="padding:24px">
@@ -134,17 +139,17 @@ ${rows}
 <tr><td style="background:#f4f8f9;color:#7b8794;padding:16px 24px;font-size:12px;line-height:1.6">Vi-Medics &mdash; Medical Equipment. Trusted Care.<br>You received this receipt because you placed an order at ${esc(siteUrl.replace(/^https?:\/\//, ''))}. Questions? Call ${PHONE}.</td></tr>
 </table></td></tr></table></body></html>`;
 
-  const form = new URLSearchParams({
-    from: `Vi-Medics <orders@${mailgunDomain}>`,
-    to: order.customer_email,
-    subject: `Your Vi-Medics receipt - Order #${ref}`,
-    text,
-    html,
-  });
+  const form = new FormData();
+  form.set('from', `Vi-Medics <orders@${mailgunDomain}>`);
+  form.set('to', order.customer_email);
+  form.set('subject', `Your Vi-Medics receipt - Order #${ref}`);
+  form.set('text', text);
+  form.set('html', html);
   if (notifyEmail) form.set('bcc', notifyEmail);
+  if (logo) form.set('inline', new Blob([logo], { type: 'image/png' }), 'logo.png');
   const mg = await fetch(`${mailgunBase}/v3/${mailgunDomain}/messages`, {
     method: 'POST',
-    headers: { Authorization: `Basic ${btoa(`api:${mailgunKey}`)}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { Authorization: `Basic ${btoa(`api:${mailgunKey}`)}` },
     body: form,
   });
   return mg.ok ? json({ sent: true }) : json({ error: 'Mailgun rejected the request', status: mg.status }, 502);

@@ -58,8 +58,8 @@ export function Confirmation({ order: placed, receipt, onNavigate }: Props) {
     <main className="page"><div className="container narrow">
       <div className="receipt-intro no-print">
         <div className="success-icon">✓</div>
-        <h1>Payment reported. Thank you.</h1>
-        <p>{order.paymentStatus === 'confirmed' ? 'Your payment is confirmed.' : 'We will confirm your payment once the transfer reflects in our account, then arrange delivery.'} {emailLine}</p>
+        <h1>Here is your receipt.</h1>
+        <p>{receipt !== null && 'Save or print it, then tap Done. '}{order.paymentStatus === 'confirmed' ? 'Your payment is confirmed.' : 'We will confirm your payment once the transfer reflects in our account, then arrange delivery.'} {emailLine}</p>
       </div>
 
       <article className="receipt" id="receipt">
@@ -90,8 +90,9 @@ export function Confirmation({ order: placed, receipt, onNavigate }: Props) {
 
       <div className="hero-actions no-print" style={{ marginTop: 18 }}>
         <button className="primary-button" onClick={() => window.print()}>Print / save as PDF</button>
-        <button className="outline-button" onClick={() => onNavigate('/account')}>View my orders</button>
-        <button className="text-button" onClick={() => onNavigate('/products')}>Continue shopping</button>
+        {receipt !== null
+          ? <button className="outline-button" onClick={() => onNavigate('/thank-you')}>Done →</button>
+          : <button className="outline-button" onClick={() => onNavigate('/account')}>Back to my orders</button>}
       </div>
     </div></main>
   );

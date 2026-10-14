@@ -96,3 +96,11 @@ Product categories are enforced by a check constraint in Supabase. After adding 
 
 ## Admin area (/admin)
 Admins manage products (including descriptions and photo upload), view customers and orders, and update order status. Access is decided by the database: `supabase/migrations/003-admin.sql` creates a locked `admins` table, an `is_admin()` function and admin-only RLS policies, and makes the store owner's email an admin. To add another admin, insert their auth user id into `public.admins` in the SQL Editor. The page is `noindex`, disallowed in `robots.txt`, and only shown in My Account for admins.
+
+## Payments, receipts, reports and audit trail
+- Customers pay by **bank transfer** only. Checkout saves the order (pending, awaiting payment, stock reserved) and shows the bank details; **I have paid** records the report and emails a branded receipt (`api/send-receipt.ts`). The receipt is also shown on screen and can be printed or saved as PDF.
+- Bank details are stored in the `store_settings` table and edited in **Admin -> Payment settings**. They are never hard-coded.
+- Admin can **Confirm payment** and **Mark delivered** on each order. Cancelling an order returns its stock.
+- **Reports** (Admin -> Reports): orders, money received, awaiting payment, delivered, average order, new customers, best sellers, stock to watch, CSV download.
+- **Audit trail** (Admin -> Audit trail): who did what and when (orders, payments, deliveries, product and payment-setting changes, new accounts, sign-ins). Written by database triggers; admins can read it but nobody can edit or delete entries from the app.
+- Setup: run `supabase/migrations/006-payments-reports-audit.sql` once. Optional env var `ORDER_NOTIFY_EMAIL` sends a BCC of every receipt to the store.

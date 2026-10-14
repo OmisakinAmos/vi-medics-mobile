@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { ErrorMessage, Loading } from '../components/StatusMessage';
-import { money } from '../lib/format';
+import { PAYMENT_LABEL, formatDateTime, money } from '../lib/format';
 import { checkIsAdmin } from '../services/adminService';
 import { listMyOrders } from '../services/orderService';
+import type { PlacedOrder } from '../services/orderService';
 import type { Navigate, Order } from '../types';
 
 const formatDate = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-export function Account({ onNavigate }: { onNavigate: Navigate }) {
+export function Account({ onNavigate, onPay, onViewReceipt }: { onNavigate: Navigate; onPay: (order: PlacedOrder) => void; onViewReceipt: (order: PlacedOrder) => void }) {
   const { user, loading: authLoading, signOut } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,7 +68,7 @@ export function Account({ onNavigate }: { onNavigate: Navigate }) {
           {orders.map((order) => (
             <div key={order.id}>
               <div className="order-card">
-                <div><strong>#{order.orderNumber}</strong><span>{formatDate(order.createdAt)} · {order.items.reduce((s, i) => s + i.quantity, 0)} items</span></div>
+                <div><strong>#{order.orderNumber}</strong><span>{formatDate(order.createdAt)} · {order.items.reduce((s, i) => s + i.quantity, 0)} items</span><span className={`pay-badge pay-${order.status === 'cancelled' ? 'cancelled' : order.paymentStatus}`}>{order.status === 'cancelled' ? 'Cancelled' : PAYMENT_LABEL[order.paymentStatus]}</span></div>
                 <strong>{money(order.total)}</strong>
                 <span className="order-status" style={{ textTransform: 'capitalize' }}>{order.status}</span>
                 <button onClick={() => setOpenId(openId === order.id ? null : order.id)}>{openId === order.id ? 'Hide order' : 'View order'}</button>
@@ -77,6 +78,11 @@ export function Account({ onNavigate }: { onNavigate: Navigate }) {
                   {order.items.map((i) => <div key={i.id}><span>{i.productName} × {i.quantity}</span><strong>{money(i.unitPrice * i.quantity)}</strong></div>)}
                   <div><span>Delivery</span><strong>{money(order.deliveryFee)}</strong></div>
                   <div className="summary-total"><span>Total</span><strong>{money(order.total)}</strong></div>
+                  {order.deliveredAt && <div><span>Delivered</span><strong>{formatDateTime(order.deliveredAt)}</strong></div>}
+                  <div className="order-actions">
+                    {order.paymentStatus === 'awaiting' && order.status !== 'cancelled' && <button className="primary-button" onClick={() => { onPay({ id: order.id, orderNumber: order.orderNumber, total: order.total }); onNavigate('/payment'); }}>Pay by bank transfer →</button>}
+                    {order.paymentStatus !== 'awaiting' && <button className="outline-button" onClick={() => { onViewReceipt({ id: order.id, orderNumber: order.orderNumber, total: order.total }); onNavigate('/confirmation'); }}>View receipt</button>}
+                  </div>
                 </div>
               )}
             </div>

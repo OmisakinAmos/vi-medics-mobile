@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type { Category, OrderStatus, Product, ProductStatus } from '../types';
+import type { Category, OrderStatus, PaymentStatus, Product, ProductStatus } from '../types';
 
 /** Admin-only data access. Every call is also enforced by Row Level Security in the database. */
 
@@ -95,13 +95,15 @@ export async function uploadProductImage(file: File, productId: string): Promise
 
 // -------------------------------------------------------------------- orders
 export type AdminOrder = {
-  id: string; orderNumber: string; status: OrderStatus; total: number; createdAt: string;
+  id: string; orderNumber: string; status: OrderStatus; paymentStatus: PaymentStatus; total: number; createdAt: string;
+  paidReportedAt: string | null; paymentConfirmedAt: string | null; deliveredAt: string | null;
   customerName: string; customerEmail: string; customerPhone: string; address: string; city: string; state: string;
   items: { id: string; productName: string; unitPrice: number; quantity: number }[];
 };
 
 type OrderRow = {
-  id: string; order_number: number; status: OrderStatus; total: number | string; created_at: string;
+  id: string; order_number: number; status: OrderStatus; payment_status: PaymentStatus; total: number | string; created_at: string;
+  paid_reported_at: string | null; payment_confirmed_at: string | null; delivered_at: string | null;
   customer_name: string; customer_email: string; customer_phone: string; address: string; city: string; state: string;
   order_items: { id: string; product_name: string; unit_price: number | string; quantity: number }[];
 };
@@ -109,12 +111,13 @@ type OrderRow = {
 export async function adminListOrders(): Promise<AdminOrder[]> {
   const { data, error } = await db()
     .from('orders')
-    .select('id, order_number, status, total, created_at, customer_name, customer_email, customer_phone, address, city, state, order_items(id, product_name, unit_price, quantity)')
+    .select('id, order_number, status, payment_status, total, created_at, paid_reported_at, payment_confirmed_at, delivered_at, customer_name, customer_email, customer_phone, address, city, state, order_items(id, product_name, unit_price, quantity)')
     .order('created_at', { ascending: false })
     .limit(500);
   if (error) throw new Error(error.message);
   return (data as unknown as OrderRow[]).map((r) => ({
-    id: r.id, orderNumber: `VM-${r.order_number}`, status: r.status, total: Number(r.total), createdAt: r.created_at,
+    id: r.id, orderNumber: `VM-${r.order_number}`, status: r.status, paymentStatus: r.payment_status, total: Number(r.total), createdAt: r.created_at,
+    paidReportedAt: r.paid_reported_at, paymentConfirmedAt: r.payment_confirmed_at, deliveredAt: r.delivered_at,
     customerName: r.customer_name, customerEmail: r.customer_email, customerPhone: r.customer_phone,
     address: r.address, city: r.city, state: r.state,
     items: r.order_items.map((i) => ({ id: i.id, productName: i.product_name, unitPrice: Number(i.unit_price), quantity: i.quantity })),
@@ -124,6 +127,47 @@ export async function adminListOrders(): Promise<AdminOrder[]> {
 export async function adminUpdateOrderStatus(id: string, status: OrderStatus): Promise<void> {
   const { error } = await db().from('orders').update({ status }).eq('id', id);
   if (error) throw new Error(error.message);
+}
+
+/** Marks the payment as received in the bank account. A pending order becomes confirmed at the same time. */
+export async function adminConfirmPayment(id: string, currentStatus: OrderStatus): Promise<void> {
+  const patch: { payment_status: PaymentStatus; status?: OrderStatus } = { payment_status: 'confirmed' };
+  if (currentStatus === 'pending') patch.status = 'confirmed';
+  const { error } = await db().from('orders').update(patch).eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+// ------------------------------------------------------------ payment settings
+export type PaymentSettings = { bankName: string; accountName: string; accountNumber: string };
+
+export async function adminSavePaymentSettings(s: PaymentSettings): Promise<void> {
+  const rows = [
+    { key: 'bank_name', value: s.bankName.trim() },
+    { key: 'account_name', value: s.accountName.trim() },
+    { key: 'account_number', value: s.accountNumber.trim() },
+  ].map((r) => ({ ...r, updated_at: new Date().toISOString() }));
+  const { error } = await db().from('store_settings').upsert(rows);
+  if (error) throw new Error(error.message);
+}
+
+// ------------------------------------------------------------------ audit trail
+export type AuditEntry = {
+  id: number; createdAt: string; actorEmail: string; actorName: string; actorRole: string;
+  action: string; entity: string; entityId: string; summary: string; details: Record<string, unknown>;
+};
+
+type AuditRow = {
+  id: number; created_at: string; actor_email: string | null; actor_name: string | null; actor_role: string;
+  action: string; entity: string | null; entity_id: string | null; summary: string; details: Record<string, unknown> | null;
+};
+
+export async function adminListAudit(limit: number): Promise<AuditEntry[]> {
+  const { data, error } = await db().from('audit_log').select('*').order('id', { ascending: false }).limit(limit);
+  if (error) throw new Error(error.message);
+  return (data as AuditRow[]).map((r) => ({
+    id: r.id, createdAt: r.created_at, actorEmail: r.actor_email ?? '', actorName: r.actor_name ?? '', actorRole: r.actor_role,
+    action: r.action, entity: r.entity ?? '', entityId: r.entity_id ?? '', summary: r.summary, details: r.details ?? {},
+  }));
 }
 
 // ----------------------------------------------------------------- customers

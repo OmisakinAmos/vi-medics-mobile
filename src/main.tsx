@@ -7,6 +7,7 @@ import './styles.css';
 import './mobile.css';
 import './seo.css';
 import './admin.css';
+import './payment.css';
 
 initNative();
 

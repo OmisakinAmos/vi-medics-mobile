@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from './auth';
-import type { PlacedOrder } from './services/orderService';
+import type { PlacedOrder, ReceiptResult } from './services/orderService';
 import { Footer } from './components/Footer';
 import { BottomNav } from './components/BottomNav';
 import { Header } from './components/Header';
@@ -13,6 +13,7 @@ import { Checkout } from './pages/Checkout';
 import { Confirmation } from './pages/Confirmation';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
+import { Payment } from './pages/Payment';
 import { ProductDetails } from './pages/ProductDetails';
 import { Products } from './pages/Products';
 import { Services } from './pages/Services';
@@ -38,7 +39,7 @@ if (window.location.hash.startsWith('#/')) {
 
 const currentRoute = () => window.location.pathname.replace(/\/+$/, '') || '/';
 
-const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/services', '/admin', '/confirmation'];
+const KNOWN = ['/', '/products', '/cart', '/checkout', '/login', '/account', '/about', '/services', '/admin', '/payment', '/confirmation'];
 const isKnown = (r: string) => KNOWN.includes(r) || /^\/product\/[^/]+$/.test(r);
 
 const PRIVATE: Record<string, string> = {
@@ -47,7 +48,8 @@ const PRIVATE: Record<string, string> = {
   '/login': 'Sign in or create an account',
   '/account': 'My account and orders',
   '/admin': 'Admin',
-  '/confirmation': 'Order confirmation',
+  '/payment': 'Pay by bank transfer',
+  '/confirmation': 'Payment receipt',
 };
 
 /** Title/description for pages whose content does not depend on loaded data. Product pages set their own. */
@@ -108,6 +110,7 @@ export function App() {
   const [cart, setCart] = useState<CartItem[]>(loadCart);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [lastOrder, setLastOrder] = useState<PlacedOrder | null>(null);
+  const [receipt, setReceipt] = useState<ReceiptResult | null>(null);
   const postLogin = useRef('/account');
   const { user } = useAuth();
 
@@ -144,7 +147,9 @@ export function App() {
   const navigate = (path: string) => { go(path); setMobileOpen(false); };
 
   const requireLogin = (returnTo: string) => { postLogin.current = returnTo; navigate('/login'); };
-  const handlePlaced = (order: PlacedOrder) => { setLastOrder(order); setCart([]); };
+  const handlePlaced = (order: PlacedOrder) => { setLastOrder(order); setReceipt(null); setCart([]); };
+  const handlePaid = (order: PlacedOrder, result: ReceiptResult) => { setLastOrder(order); setReceipt(result); };
+  const handleSelectOrder = (order: PlacedOrder) => { setLastOrder(order); setReceipt(null); };
 
   return (
     <div className="site-shell">
@@ -156,11 +161,12 @@ export function App() {
       {route === '/cart' && <Cart cart={cart} onNavigate={navigate} onUpdate={updateQuantity} onRemove={removeFromCart} />}
       {route === '/checkout' && <Checkout cart={cart} onNavigate={navigate} onRequireLogin={() => requireLogin('/checkout')} onPlaced={handlePlaced} />}
       {route === '/login' && <Login onNavigate={navigate} onSuccess={() => { const to = postLogin.current; postLogin.current = '/account'; navigate(to); }} />}
-      {route === '/account' && <Account onNavigate={navigate} />}
+      {route === '/account' && <Account onNavigate={navigate} onPay={handleSelectOrder} onViewReceipt={handleSelectOrder} />}
       {route === '/about' && <About />}
       {route === '/admin' && <Admin onNavigate={navigate} onRequireLogin={() => requireLogin('/admin')} />}
       {route === '/services' && <Services />}
-      {route === '/confirmation' && <Confirmation order={lastOrder} onNavigate={navigate} />}
+      {route === '/payment' && <Payment order={lastOrder} onNavigate={navigate} onRequireLogin={() => requireLogin('/account')} onPaid={handlePaid} />}
+      {route === '/confirmation' && <Confirmation order={lastOrder} receipt={receipt} onNavigate={navigate} />}
       {!isKnown(route) && <NotFound />}
 
       <Footer onNavigate={navigate} />

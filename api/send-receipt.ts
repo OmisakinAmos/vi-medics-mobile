@@ -77,7 +77,7 @@ export async function POST(request: Request): Promise<Response> {
   // The logo travels inside the email (inline attachment), because mail apps hide pictures loaded from the web
   // for new senders. It is bundled with this function, so there is no network fetch that could fail.
   const logo = Uint8Array.from(atob(LOGO_PNG_BASE64), (c) => c.charCodeAt(0));
-  const logoSrc = 'cid:logo.png';
+  const logoSrc = 'cid:vimedics-logo@vi-medics'; // must match the Content-ID header of the logo part in buildMime()
 
   const ref = `VM-${order.order_number}`;
   const receiptNo = `RCT-${ref}`;
@@ -154,15 +154,17 @@ ${rows}
 <tr><td style="background:#f4f8f9;color:#7b8794;padding:16px 24px;font-size:12px;line-height:1.6">Vi-Medics &mdash; Medical Equipment. Trusted Care.<br>You received this receipt because you placed an order at ${esc(siteUrl.replace(/^https?:\/\//, ''))}. Questions? Call ${PHONE}.</td></tr>
 </table></td></tr></table></body></html>`;
 
+  // A hand-built MIME message gives full control of the logo's Content-ID, so the picture at the top of the email
+  // is tied to the attached logo in every mail app (the simple "inline" form field left Gmail showing it at the bottom).
+  const from = `Vi-Medics <orders@${mailgunDomain}>`;
+  const subject = `Your Vi-Medics receipt - Order #${ref}`;
+  const mime = buildMime({ from, to: order.customer_email, subject, text, html, logo });
+
   const form = new FormData();
-  form.set('from', `Vi-Medics <orders@${mailgunDomain}>`);
-  form.set('to', order.customer_email);
-  form.set('subject', `Your Vi-Medics receipt - Order #${ref}`);
-  form.set('text', text);
-  form.set('html', html);
-  if (notifyEmail) form.set('bcc', notifyEmail);
-  form.set('inline', new Blob([logo], { type: 'image/png' }), 'logo.png');
-  const mg = await fetch(`${mailgunBase}/v3/${mailgunDomain}/messages`, {
+  // Extra recipients that are not in the To header act as a hidden copy (BCC).
+  form.set('to', notifyEmail ? `${order.customer_email},${notifyEmail}` : order.customer_email);
+  form.set('message', new Blob([mime], { type: 'message/rfc822' }), 'message.mime');
+  const mg = await fetch(`${mailgunBase}/v3/${mailgunDomain}/messages.mime`, {
     method: 'POST',
     headers: { Authorization: `Basic ${btoa(`api:${mailgunKey}`)}` },
     body: form,
@@ -171,6 +173,55 @@ ${rows}
   const detail = (await mg.text().catch(() => '')).slice(0, 160);
   console.error('Mailgun rejected receipt', mg.status, detail);
   return json({ error: 'Mailgun rejected the request', status: mg.status, detail }, 502);
+}
+
+/** Base64 with 76-character lines, as email requires. */
+function b64(bytes: Uint8Array): string {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin).replace(/(.{76})/g, '$1\r\n');
+}
+
+/** Header values must be one line and free of line breaks (stops header injection). */
+const clean = (v: string) => v.replace(/[\r\n]+/g, ' ').trim();
+
+/** multipart/related( multipart/alternative( text, html ), inline logo ). */
+function buildMime(m: { from: string; to: string; subject: string; text: string; html: string; logo: Uint8Array }): string {
+  const enc = new TextEncoder();
+  const rel = `rel_${crypto.randomUUID().replace(/-/g, '')}`;
+  const alt = `alt_${crypto.randomUUID().replace(/-/g, '')}`;
+  return [
+    `From: ${clean(m.from)}`,
+    `To: ${clean(m.to)}`,
+    `Subject: ${clean(m.subject)}`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/related; boundary="${rel}"; type="multipart/alternative"`,
+    '',
+    `--${rel}`,
+    `Content-Type: multipart/alternative; boundary="${alt}"`,
+    '',
+    `--${alt}`,
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    b64(enc.encode(m.text)),
+    `--${alt}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    b64(enc.encode(m.html)),
+    `--${alt}--`,
+    '',
+    `--${rel}`,
+    'Content-Type: image/png; name="logo.png"',
+    'Content-Transfer-Encoding: base64',
+    'Content-ID: <vimedics-logo@vi-medics>',
+    'Content-Disposition: inline; filename="logo.png"',
+    '',
+    b64(m.logo),
+    `--${rel}--`,
+    '',
+  ].join('\r\n');
 }
 
 // Vi-Medics logo (330px wide, flattened on white), bundled in this file so the email can attach it inline.

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useAuth } from '../auth';
 import { DELIVERY_NOTE, money } from '../lib/format';
 import { placeOrder, type PlacedOrder } from '../services/orderService';
@@ -16,6 +16,11 @@ export function Checkout({ cart, onNavigate, onRequireLogin, onPlaced }: Props) 
   const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
   const [form, setForm] = useState({ name: (user?.user_metadata?.full_name as string) ?? '', email: user?.email ?? '', phone: '', address: '', city: '', state: '', country: 'Nigeria' });
+  // After a page reload the sign-in finishes loading after the form was created, so fill in name and email once they are known.
+  useEffect(() => {
+    if (!user) return;
+    setForm((f) => ({ ...f, name: f.name || (user.user_metadata?.full_name as string | undefined) || '', email: f.email || user.email || '' }));
+  }, [user?.id]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [key]: e.target.value }));

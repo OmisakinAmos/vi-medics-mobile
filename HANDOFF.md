@@ -53,3 +53,9 @@
 - Admin -> Accounting: Overview (KPIs, trend, cash view), Products, Locations (state/city), Expenses (add/delete, CSV). Cost price field is on the product form.
 - Owner rules: revenue = payment confirmed; categories = stock, marketing, other.
 - Next: edit expenses, supplier list, invoices/receipts upload, Google Business Profile.
+
+
+## Automated tests
+- 20 Playwright tests x desktop and mobile (40 runs) pass locally against a fake backend (`tests/e2e/support/fakeBackend.ts`).
+- Run with `npm run test:e2e`; CI runs them via `.github/workflows/e2e.yml`.
+- The tests found and fixed a real bug: checkout name/email were empty after a page reload (now prefilled from the signed-in user).

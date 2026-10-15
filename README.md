@@ -115,3 +115,19 @@ See `SECURITY.md`. Run `supabase/migrations/007-security-and-delivery.sql` after
 
 ## Accounting
 Admin -> Accounting. Run `supabase/migrations/008-accounting.sql` after 007. Sales count when a payment is confirmed (cancelled orders never count). Cost prices are stored in the admin-only `product_costs` table (never on the public products table) and snapshotted per sold item in `order_item_costs`. Profit = sales - cost of goods - marketing/other costs; stock purchases are shown separately so they are not counted twice. Pure maths lives in `src/lib/accounting.ts`.
+
+
+## Automated tests (Playwright)
+
+End-to-end tests live in `tests/e2e` and run against the real app with a **fake in-browser Supabase**
+(network calls are intercepted), so no real data, accounts or secrets are involved.
+
+```
+npm install
+npx playwright install chromium
+npm run test:e2e
+```
+
+They cover browsing, cart, checkout, stock limits, order persistence, customers only seeing their own orders,
+receipt-email failure handling, and the admin accounting tab, on desktop and mobile viewports.
+They also run on every push through `.github/workflows/e2e.yml`.
